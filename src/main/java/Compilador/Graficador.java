@@ -5,28 +5,33 @@
  */
 package Compilador;
 
-import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics;
+import javax.swing.JPanel;
 
 /**
  *
  * @author ESML1
  */
-public class Graficador extends Canvas {
+public class Graficador extends JPanel {
     public void Graficador() {
         this.setBackground(Color.white);
-        this.setBounds(0,0,50,150);
+        this.setBounds(0,0,250,500);
     }
     @Override
     public void paint(Graphics g){
-        super.paint(g);
-        g.setColor(Color.yellow);
-        g.drawLine(0,0,100,200);
-        g.drawOval(10,10,25,25);
+        super.paint(g); 
+        g.setColor(Color.BLACK);
+        g.fillRect(50,100,50,100);
+        
     }
     @Override
     public void repaint(){
         
     }
 }
+
+
+    
+
+  

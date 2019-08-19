@@ -16,9 +16,11 @@ public class Main {
      */
     public static void main(String[] args) {
         PantallaPrincipal p = new PantallaPrincipal();
-        p.setBounds(0,0,800,600);
+        p.setBounds(0,0,1000,600);
         p.setTitle("Compilador feo");
         p.setVisible(true);
+        
+        
         
         // TODO code application logic here
     }
