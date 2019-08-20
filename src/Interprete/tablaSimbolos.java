@@ -117,12 +117,17 @@ public class tablaSimbolos {
     //revisar si el token es un identificador
     public boolean isID(String token){
         //revisar si es un ID
-        for(int i=0; i<indexID; i++){
-            if( ids.get(i).get(0).equals(token) ){
-                return true;
-            }
+        if(indexID==0){
+            return false;
         }
+        else{       
+            for(int i=0; i<indexID; i++){
+                if( ids.get(i).get(0).equals(token) ){
+                    return true;
+                }
+            }
         return false;
+        }   
     }
     //busca si pertenece a la tabla de simbolos y devolver el tipo
     public boolean isUnknow(String token){
