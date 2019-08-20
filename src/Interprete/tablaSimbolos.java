@@ -21,8 +21,8 @@ public class tablaSimbolos {
     public Map<String,String> modo;
     public Map<String,Integer> lineas;
     public ArrayList<ArrayList<String>> ids;
+    //metodos es para ir comparando las sentencias del Sintanctico (Interprete.sin) que concuerden con los valores de los metodos
     public Map<String,ArrayList<String>> metodos;
-    private int indexID=0;
     
     //constructor inicializacion
     public tablaSimbolos(){
@@ -101,8 +101,6 @@ public class tablaSimbolos {
         nuevo.add(Integer.toString(linea));
         nuevo.add(Integer.toString(columna));
         ids.add(nuevo);
-        indexID++;
-        //token, valor;
     }
     //ver si el token es palabra reservada
     public boolean isPR(String token){
@@ -117,11 +115,11 @@ public class tablaSimbolos {
     //revisar si el token es un identificador
     public boolean isID(String token){
         //revisar si es un ID
-        if(indexID==0){
+        if(ids.isEmpty()){
             return false;
         }
         else{       
-            for(int i=0; i<indexID; i++){
+            for(int i=0; i<ids.size(); i++){
                 if( ids.get(i).get(0).equals(token) ){
                     return true;
                 }
@@ -178,5 +176,9 @@ public class tablaSimbolos {
             }
         }
         return false;
+    }
+    
+    public void vaciarIds(){
+        if(!ids.isEmpty()) ids.clear();
     }
 }
