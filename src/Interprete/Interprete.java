@@ -166,8 +166,11 @@ public class Interprete{
     }
     public void graficar(){   
     }
+    //metodo para ir comparanto la tablaS.metodos e Interprete.sin
     public void revisarOrden(String valorActual){
-        
+    }
+    public void vaciarDatos(){
+        tablaS.vaciarIds();
     }
     public void mandarMensajeLexico(String mensaje){
         w.ErroresL.append(mensaje);
