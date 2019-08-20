@@ -61,7 +61,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     }
     
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -159,19 +159,19 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane2))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(Lienzo, javax.swing.GroupLayout.DEFAULT_SIZE, 594, Short.MAX_VALUE)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(Lienzo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 285, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane4)))
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 267, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 298, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 274, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -190,9 +190,9 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         );
 
         pack();
-    }// </editor-fold>//GEN-END:initComponents
+    }// </editor-fold>                        
 
-    private void abrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_abrirActionPerformed
+    private void abrirActionPerformed(java.awt.event.ActionEvent evt) {                                      
         if(seleccionar.showDialog(null,"Abrir")==JFileChooser.APPROVE_OPTION){
             archivo=seleccionar.getSelectedFile();
             if(archivo.canRead()){
@@ -204,23 +204,23 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                 }
             }
         }
-    }//GEN-LAST:event_abrirActionPerformed
+    }                                     
 
-    private void guardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guardarActionPerformed
+    private void guardarActionPerformed(java.awt.event.ActionEvent evt) {                                        
         if(!"".equals(archivo.getPath()))
             GuardarArchivo(archivo, Texto.getText());
         else
             JOptionPane.showMessageDialog(null,"Archivo vac�o");
-    }//GEN-LAST:event_guardarActionPerformed
+    }                                       
 
-    private void ejecutarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ejecutarActionPerformed
+    private void ejecutarActionPerformed(java.awt.event.ActionEvent evt) {                                         
         
         Lienzo.add(g);
         g.repaint();
         System.out.println("Entro");
-    }//GEN-LAST:event_ejecutarActionPerformed
+    }                                        
 
-    private void guardarComoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guardarComoActionPerformed
+    private void guardarComoActionPerformed(java.awt.event.ActionEvent evt) {                                            
         if( !"".equals(Texto.getText()) ){
             if(seleccionar.showDialog(null,"Guardar")==JFileChooser.APPROVE_OPTION){
                 archivo = seleccionar.getSelectedFile();
@@ -238,14 +238,15 @@ public class PantallaPrincipal extends javax.swing.JFrame {
             }
         }
         else JOptionPane.showMessageDialog(null,"Archivo vac�o");
-    }//GEN-LAST:event_guardarComoActionPerformed
+    }                                           
 
-    private void compilarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_compilarActionPerformed
+    private void compilarActionPerformed(java.awt.event.ActionEvent evt) {                                         
         inter.lexico(Texto.getText());
         inter.getArraySintactico();
-    }//GEN-LAST:event_compilarActionPerformed
+        inter.vaciarDatos();
+    }                                        
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
+    // Variables declaration - do not modify                     
     public javax.swing.JTextArea ErroresL;
     public javax.swing.JTextArea ErroresSem;
     public javax.swing.JTextArea ErroresSin;
@@ -263,5 +264,5 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
-    // End of variables declaration//GEN-END:variables
+    // End of variables declaration                   
 }
