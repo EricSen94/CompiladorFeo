@@ -18,7 +18,6 @@ public class tablaSimbolos {
     public Map<String,String> operadores;
     public Map<String,String> separadores;
     public Map<String,String> tipoDato;
-    public Map<String,String> modo;
     public Map<String,Integer> lineas;
     public ArrayList<ArrayList<String>> ids;
     //metodos es para ir comparando las sentencias del Sintanctico (Interprete.sin) que concuerden con los valores de los metodos
@@ -30,7 +29,6 @@ public class tablaSimbolos {
          metodos = new HashMap<>();
          tipoDato = new HashMap<>();
          separadores = new HashMap<>();
-         modo = new HashMap<>();
          operadores = new HashMap<>();
          palabrasReservadas = new HashMap<>();
          
@@ -44,16 +42,15 @@ public class tablaSimbolos {
          palabrasReservadas.put("delete", "EliminarCara");
          palabrasReservadas.put("sleep", "Dormir");
          palabrasReservadas.put("change", "CambiarModo");
+         palabrasReservadas.put("sad", "triste");
+         palabrasReservadas.put("angry", "enojada");
+         palabrasReservadas.put("happy", "feliz");
+         palabrasReservadas.put("sleepy", "dormida");
+         palabrasReservadas.put("serio", "neutral");
          
          tipoDato.put("entero", "int");
          tipoDato.put("flotante", "float");
          tipoDato.put("cadena", "String");
-         
-         modo.put("Modo sad", "triste");
-         modo.put("Modo angry", "enojada");
-         modo.put("Modo happy", "feliz");
-         modo.put("Modo sleepy", "dormida");
-         modo.put("Modo serio", "neutral");
         
          operadores.put("Parentesis Izquierdo", "(");
          operadores.put("Parentesis Derecho", ")");
@@ -107,11 +104,6 @@ public class tablaSimbolos {
         //revisar si es palabra reservada
         return palabrasReservadas.values().stream().anyMatch((valor) -> ( valor.equals(token)));
     }
-    //ver si el token es un modo (palabra reservada)
-    public boolean isModo(String token){
-        //revisar si es palabra reservada
-        return modo.values().stream().anyMatch((valor) -> ( valor.equals(token)));
-    }
     //revisar si el token es un identificador
     public boolean isID(String token){
         //revisar si es un ID
@@ -158,7 +150,7 @@ public class tablaSimbolos {
     
     public String cualPrES(String token){
         String valor="";
-        for( Map.Entry entrada : palabrasReservadas.entrySet()){
+        for( Map.Entry entrada : palabrasReservadas.entrySet() ){
             //Si el valor del token es el mismo al regisro
             if(entrada.getValue().equals(token)){
                 valor = (String)(entrada.getKey());
