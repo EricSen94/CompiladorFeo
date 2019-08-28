@@ -39,8 +39,7 @@ public class Interprete{
             String[] tokens, lineas;
             //temp para ir guardando la palabra o id 
             //caracter es el caracter actual leido
-            //charA es el caracter Anterior
-            String temp="", caracter, charA="",tipo, ope, pr;
+            String temp="", caracter,tipo, ope, pr;
             //dividimos nuestro contenido por lineas
             lineas = contenido.split("\n"); 
             
@@ -55,19 +54,18 @@ public class Interprete{
                 while(cont<lineas[i].length()){
                     //guardamos el caracter que estamos leyendo
                     caracter = String.valueOf(lineas[i].charAt(cont));
-                    if(cont>0) charA = String.valueOf(lineas[i].charAt(cont-1));
                     //Si el caracter no es un separador
                     if( !tablaS.esSeparador(caracter)){
-                        //si el caracter es una letra lo sumamos a nuestra palabra
-                        if( caracter.matches("[a-zA-Z]") ){
-                         temp+=caracter;
+                        //si el caracter es una letra O numero lo sumamos a nuestra palabra
+                        if( caracter.matches(".*[a-zA-Z0-9].*") ){
+                            temp+=caracter;
                         }
                         //si es un operador
                         else if( tablaS.operadores.containsValue(caracter) ){
-                            //Revisamos si antes habia una letra
-                            if(charA.matches("[a-zA-Z]")){ 
-                                //Revisarmos si es palabra reservada o modo
-                                if(tablaS.isPR(temp) || tablaS.isModo(temp)){
+                            //Revisamos si antes habia una palabra
+                            if(temp.matches(".*[a-zA-Z].*")){ 
+                                //Revisarmos si es palabra reservada
+                                if(tablaS.isPR(temp)){
                                     pr = tablaS.cualPrES(temp);
                                     mandarMensajeLexico("Linea "+(i+1)+", Columna "+(cont+1)+", Palabra reservada: "+pr+"\n");
                                     //Lo mandamos al sintactico
@@ -82,28 +80,30 @@ public class Interprete{
                                 }
                             }
                             //o si entonces habia un numero?
-                            else if(charA.matches("[0-9]")){
+                            else if(temp.matches(".*[0-9].*")){
                                 mandarMensajeLexico("Linea "+(i+1)+", Columna "+(cont+1)+", Numero: "+temp+"\n");
                                 sinSem(temp,"num",i,cont);
                                 temp="";
                             }
-                            //depues de revisar pasamos al operador al sintactico
+                            //Entonces la palabra anterior es una combinacion de letras y numeros (un ID)
+                            else{
+                                 mandarMensajeLexico("Linea "+(i+1)+", Columna "+(cont+1)+", ID: "+temp+"\n");
+                                 sinSem(temp,"ID",i,cont);
+                                 temp="";
+                            }
+                            //Ya que revisamos si antes habia algo, pasamos el operador actual al sintactico
                             ope = tablaS.queOpeEs(caracter);
                             mandarMensajeLexico("Linea "+(i+1)+", Columna "+(cont+1)+", operador: "+ope+"\n");
                             sinSem(caracter, ope, i, cont);
                         }
-                        //Revisamos si es numero
-                        else if(caracter.matches("[0-9]")){
-                            temp+=caracter;
-                        }
                         else mandarErrorLexico(i,cont);
                     }
-                    //Si el caracter es un separador
-                    else{
-                        //Pero antes habia alguna letra
-                        if(charA.matches("[a-zA-Z]")){ 
+                    //Si el caracter es un separador y si temp no ha sido ya vaciado
+                    else if(!temp.isEmpty()){
+                        //Pero antes habia alguna palabra
+                        if(temp.matches(".*[a-zA-Z].*")){ 
                                 //Revisarmos si es palabra reservada
-                                if(tablaS.isPR(temp) || tablaS.isModo(temp)){
+                                if(tablaS.isPR(temp)){
                                     pr = tablaS.cualPrES(temp);
                                     mandarMensajeLexico("Linea "+(i+1)+", Columna "+(cont+1)+", Palabra reservada: "+pr+"\n");
                                     //Lo mandamos al sintactico
@@ -119,17 +119,23 @@ public class Interprete{
                                 }
                             }
                         //Entonces habia un numero?
-                        else if(charA.matches("[0-9]")){
+                        else if(temp.matches(".*[0-9].*")){
                                 mandarMensajeLexico("Linea "+(i+1)+", Columna "+(cont+1)+", Numero: "+temp+"\n");
                                 //lo mandamos al sintactico
                                 sinSem(temp,"num",i,cont);
                                 temp="";
                         }
+                        //Entonces la palabra anterior es una combinacion de letras y numeros (un ID)
+                        else{
+                            mandarMensajeLexico("Linea "+(i+1)+", Columna "+(cont+1)+", ID: "+temp+"\n");
+                            sinSem(temp,"ID",i,cont);
+                            temp="";
+                        }
                     }
                     cont++;
-                    if(cont == lineas[i].length()) charA = caracter;
                 }
                 cont=0;
+                temp="";
             }
         }
         else JOptionPane.showMessageDialog(null,"No has escrito nada");
@@ -137,15 +143,13 @@ public class Interprete{
     //Token de la PR, valor del ID o valor del Numero
     public void sinSem(String token, String QueEs, int linea, int columna){
         System.out.println("Analizando Sintactico");
-        if(QueEs.equals("ID")){
-            //revisamos si no estaba antes para agregarlo
-            if(!tablaS.isID(token)) tablaS.agregarID(token, linea, columna);
-        }
-        if(sin.isEmpty()){
+        if(sin.isEmpty() ){
+            //ken.equals(tablaS.palabrasReservadas.get("pro")
             sin.add(token);
         }
         //Revisamos lo que deberia esperar en base al ultimo elemento ingresado
         else{
+            //los primeros 3 valores deben ser PRO nombre BEGIN afuera
            String ultimo = sin.get(sin.size()-1);
            //Para cuando sean palabras reservadas
            if(tablaS.isPR(ultimo)){
@@ -162,6 +166,11 @@ public class Interprete{
            else if(tablaS.isID(ultimo)){
                
            }
+        }
+        
+        if(QueEs.equals("ID")){
+            //revisamos si no estaba antes para agregarlo
+            if(!tablaS.isID(token)) tablaS.agregarID(token, linea, columna);
         }
     }
     public void graficar(){   
