@@ -8,6 +8,7 @@ import javax.swing.JOptionPane;
 import Compilador.PantallaPrincipal;
 import java.util.ArrayList;
 import java.util.stream.Stream;
+import javafx.scene.text.Text;
 
 /**
  *
@@ -41,6 +42,7 @@ public class Interprete{
         sinLinea = new ArrayList();
         sinColumna = new ArrayList();
         esperoEsto = new ArrayList();
+        revisando = new ArrayList();
         noHayErrorSintactico = false;
         faltaDato=true;
         w = new PantallaPrincipal(this);
@@ -173,7 +175,7 @@ public class Interprete{
         String revisar="";
         System.out.println("Analizando Sintactico");
         //Si es el primer valor en ingresar, añadimos todo a la lista
-        if(sinTokens.isEmpty() ){
+        if(sinTokens.isEmpty()){
             //Lo primero que debe esperar debe ser un PRO
             if(token.equals("pro")){
                 //ken.equals(tablaS.palabrasReservadas.get("pro")
@@ -197,13 +199,13 @@ public class Interprete{
                     //Se hace clear porque solo espera a un BEGIN
                     esperoEsto.clear();
                     esperoEsto.add("begin");
-                    //Agregamos las cosas a los arreglos
+                    //Agregamos los valores a los arreglos
                     sinTokens.add(token);
                     sinQueEs.add(QueEs);
                     sinLinea.add(linea);
                     sinColumna.add(columna);
                 }
-                //Si es el tercer valor y es correcto
+                //Si es el tercer valor ingresado y es correcto
                 else if(sinTokens.size() == 2 && token.equals(esperoEsto.get(0))){
                     esperoEsto.clear();
                     //Ahora solo puede esperar métodos y un 'end'
@@ -217,15 +219,12 @@ public class Interprete{
                     sinQueEs.add(QueEs);
                     sinLinea.add(linea);
                     sinColumna.add(columna);
+                    
                 }
                 else mandarErrorSintactico(linea, columna);
            }
            //Cuando ya esta bien el los primeros 3 tokens
            else{
-                sinTokens.add(token);
-                sinQueEs.add(QueEs);
-                sinLinea.add(linea);
-                sinColumna.add(columna);
                 //Si es un nuevo metodo a revisar
                 if(revisar.isEmpty()){
                 //Comparamos lo que esperamos y lo que tenemos
@@ -242,33 +241,17 @@ public class Interprete{
                 else
                     //Usamos el metodo
                     revisarOrden(token, revisarPos);
+                
+                sinTokens.add(token);
+                sinQueEs.add(QueEs);
+                sinLinea.add(linea);
+                sinColumna.add(columna);
                }
                //Si ya se está revisando un metodo
                else{
                    
                }
            }
-           
-//           String ultimo = sinTokens.get(sinTokens.size()-1);
-//           //Para cuando sean palabras reservadas
-//           if(tablaS.isPR(ultimo)){
-//               switch(ultimo){
-//               //Solo Programa espera un ID después
-//                   case "pro":
-//                       int i;
-//                       for(i=0; i<sinTokens.size()-1; i++){
-//                           
-//                       }
-//                       if(QueEs.equals("ID")) sinTokens.clear();
-//                       else mandarErrorSintactico(linea, columna);
-//                   default:
-//                       if(!QueEs.equals("(")) mandarErrorSintactico(linea, columna);
-//                       else sinTokens.add(token);
-//               }
-//           }
-//           else if(tablaS.isID(ultimo)){
-//               
-//           }
         }
         
         if(QueEs.equals("ID")){
@@ -290,11 +273,16 @@ public class Interprete{
     //metodo para ir comparanto la tablaS.metodos e Interprete.sin
     public void revisarOrden(String token, int pos){
         int i;
-        if(tablaS.isPR(token)){
-            Object[] valores = tablaS.metodos.get(token).toArray();
-            for(i=0; i<valores.length; i++){
-                revisando.add(valores[i].toString());
-                System.out.println(valores[i].toString()+"\n");
+        //Revisamos si el token es el nombre del metodo a revisar
+        if(tablaS.metodos.containsKey(token)){
+            System.out.println("size del arreglo: "+sinTokens.size());
+            //Guardamos el array de la estructura de ese metodo
+            int tamanio = tablaS.metodos.get(token).size();
+            String valor="";
+            for(i=1; i<tamanio; i++){
+                valor = tablaS.metodos.get(token).get(i);
+                revisando.add(valor);
+                System.out.println(valor+"\n");
             }
             
         }

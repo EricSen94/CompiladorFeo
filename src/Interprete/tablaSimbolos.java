@@ -38,7 +38,7 @@ public class tablaSimbolos {
          separadores.put("enter1", "\r");
          separadores.put("enter2", "\n");
          separadores.put("tab", "\t");
-         separadores.put("tab", "\0");
+         separadores.put("tab", "/0");
          
          //Las palabras reservadas ocupadas en el lenguaje
          palabrasReservadas = new HashMap<>();
