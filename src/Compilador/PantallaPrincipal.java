@@ -39,12 +39,11 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         try{
             entrada =  new FileInputStream(Archivo);
             documento = new Scanner(entrada).useDelimiter("\\A").next();
-            
             entrada.close();
+            
         }catch (IOException e){
             return e.getMessage();
         }
-        
         return documento;
     }
     public String GuardarArchivo(File Archivo,String Documento){
@@ -61,7 +60,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     }
     
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -73,6 +72,9 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         ErroresSin = new javax.swing.JTextArea();
         jScrollPane4 = new javax.swing.JScrollPane();
         ErroresSem = new javax.swing.JTextArea();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         abrir = new javax.swing.JMenuItem();
@@ -104,6 +106,12 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         ErroresSem.setColumns(20);
         ErroresSem.setRows(5);
         jScrollPane4.setViewportView(ErroresSem);
+
+        jLabel1.setText("Errores Lexico");
+
+        jLabel2.setText("Errores Sintactico");
+
+        jLabel3.setText("Errores Semantico");
 
         jMenu1.setText("Archivo");
 
@@ -159,19 +167,27 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 257, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 294, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel3)
+                                .addGap(0, 220, Short.MAX_VALUE))
+                            .addComponent(jScrollPane4)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(Lienzo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 267, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 298, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 274, Short.MAX_VALUE)))
+                        .addComponent(Lienzo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -183,6 +199,11 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                     .addComponent(jScrollPane1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -190,9 +211,9 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         );
 
         pack();
-    }// </editor-fold>                        
+    }// </editor-fold>//GEN-END:initComponents
 
-    private void abrirActionPerformed(java.awt.event.ActionEvent evt) {                                      
+    private void abrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_abrirActionPerformed
         if(seleccionar.showDialog(null,"Abrir")==JFileChooser.APPROVE_OPTION){
             archivo=seleccionar.getSelectedFile();
             if(archivo.canRead()){
@@ -204,23 +225,23 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                 }
             }
         }
-    }                                     
+    }//GEN-LAST:event_abrirActionPerformed
 
-    private void guardarActionPerformed(java.awt.event.ActionEvent evt) {                                        
+    private void guardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guardarActionPerformed
         if(!"".equals(archivo.getPath()))
             GuardarArchivo(archivo, Texto.getText());
         else
             JOptionPane.showMessageDialog(null,"Archivo vac�o");
-    }                                       
+    }//GEN-LAST:event_guardarActionPerformed
 
-    private void ejecutarActionPerformed(java.awt.event.ActionEvent evt) {                                         
+    private void ejecutarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ejecutarActionPerformed
         
         Lienzo.add(g);
         g.repaint();
         System.out.println("Entro");
-    }                                        
+    }//GEN-LAST:event_ejecutarActionPerformed
 
-    private void guardarComoActionPerformed(java.awt.event.ActionEvent evt) {                                            
+    private void guardarComoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guardarComoActionPerformed
         if( !"".equals(Texto.getText()) ){
             if(seleccionar.showDialog(null,"Guardar")==JFileChooser.APPROVE_OPTION){
                 archivo = seleccionar.getSelectedFile();
@@ -238,15 +259,15 @@ public class PantallaPrincipal extends javax.swing.JFrame {
             }
         }
         else JOptionPane.showMessageDialog(null,"Archivo vac�o");
-    }                                           
+    }//GEN-LAST:event_guardarComoActionPerformed
 
-    private void compilarActionPerformed(java.awt.event.ActionEvent evt) { 
+    private void compilarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_compilarActionPerformed
         inter.lexico(Texto.getText());
         inter.getArraySintactico();
         inter.vaciarDatos();
-    }                                        
+    }//GEN-LAST:event_compilarActionPerformed
 
-    // Variables declaration - do not modify                     
+    // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JTextArea ErroresL;
     public javax.swing.JTextArea ErroresSem;
     public javax.swing.JTextArea ErroresSin;
@@ -257,6 +278,9 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenuItem ejecutar;
     private javax.swing.JMenuItem guardar;
     private javax.swing.JMenuItem guardarComo;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
@@ -264,5 +288,5 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
-    // End of variables declaration                   
+    // End of variables declaration//GEN-END:variables
 }

@@ -26,32 +26,34 @@ public class tablaSimbolos {
     public ArrayList <String>delete;
     public ArrayList <String>sleep;
     public ArrayList <String>change;
-    public ArrayList <String>pro;
     
     //constructor inicializacion
     public tablaSimbolos(){
         //Aqui iran los ids que se vayan ocupando
          ids = new ArrayList<>();
          
-         //Los espacios en blanco
+         //Los espacios en blanco, saltos y final del archivo.
          separadores = new HashMap<>();
          separadores.put("espacio", " ");
-         separadores.put("enter", "\r");
+         separadores.put("enter1", "\r");
+         separadores.put("enter2", "\n");
+         separadores.put("tab", "\t");
+         separadores.put("tab", "/0");
          
          //Las palabras reservadas ocupadas en el lenguaje
          palabrasReservadas = new HashMap<>();
          palabrasReservadas.put("pro", "Programa");
          palabrasReservadas.put("begin", "Inicio");
-         palabrasReservadas.put("end", "Fin");
-         palabrasReservadas.put("draw", "DibujarCara");
+         palabrasReservadas.put("draw", "DibujarCara");//3
          palabrasReservadas.put("delete", "EliminarCara");
          palabrasReservadas.put("sleep", "Dormir");
-         palabrasReservadas.put("change", "CambiarModo");
+         palabrasReservadas.put("change", "CambiarModo");//6
          palabrasReservadas.put("sad", "triste");
          palabrasReservadas.put("angry", "enojada");
          palabrasReservadas.put("happy", "feliz");
          palabrasReservadas.put("sleepy", "dormida");
          palabrasReservadas.put("serio", "neutral");
+         palabrasReservadas.put("end", "Fin");
          
          //Tipos de datos que pueden ingresarse en los metodos
          tipoDato = new HashMap<>();
@@ -66,11 +68,6 @@ public class tablaSimbolos {
          operadores.put("Coma", ",");
          
          //Defimos la estructura de cada uno de los metodos
-         pro = new ArrayList();
-         pro.add("PRO");
-         pro.add("ID");
-         pro.add("BEGIN");
-         
          draw = new ArrayList();
          draw.add("(");
          draw.add("num");
@@ -103,7 +100,6 @@ public class tablaSimbolos {
          
          //Agregamos a la lista de métodos, los que tenemos, a manera de usarlo como un id en Base de Datos
          metodos = new HashMap<>();
-         metodos.put("pro", pro);
          metodos.put("draw", draw);
          metodos.put("delete", delete);
          metodos.put("sleep", sleep);

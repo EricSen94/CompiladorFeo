@@ -7,6 +7,8 @@ package Interprete;
 import javax.swing.JOptionPane;
 import Compilador.PantallaPrincipal;
 import java.util.ArrayList;
+import java.util.stream.Stream;
+import javafx.scene.text.Text;
 
 /**
  *
@@ -16,16 +18,22 @@ public class Interprete{
     private final tablaSimbolos tablaS;
     private final PantallaPrincipal w;
     //SinTokens es un arreglo para ir llevando los tokens leidos
-    private ArrayList<String> sinTokens;
+    private final ArrayList<String> sinTokens;
     //sinQueEs lleva el tipo de token 
-    private ArrayList<String> sinQueEs;
+    private final ArrayList<String> sinQueEs;
     //Los arreglos de posicion del token
-    private ArrayList <Integer> sinLinea;
-    private ArrayList <Integer> sinColumna;
-    //Esta bandera es para cuando no haya error en el codigo
-    private boolean noHayErrorSintactico;
+    private final ArrayList<Integer> sinLinea;
+    private final ArrayList<Integer> sinColumna;
     //Variable que guardará el valor de lo que espera al siguiente, es un array porque puede esperar varias cosas
-    private ArrayList<String> esperoEsto;
+    private final ArrayList<String> esperoEsto;
+    //Esta bandera es para cuando no haya error en el codigo
+    private final boolean noHayErrorSintactico;
+    //Lo mismo pero cuando se queda mocho
+    private final boolean faltaDato;
+    //Para revisar el orden en el sintactico
+    int revisarPos=0;
+    //un arreglo que mantiene los valores de algun metodo que se esta revisndo
+    ArrayList<String> revisando;
     
     public Interprete(){
         tablaS = new tablaSimbolos();
@@ -33,7 +41,10 @@ public class Interprete{
         sinQueEs = new ArrayList();
         sinLinea = new ArrayList();
         sinColumna = new ArrayList();
+        esperoEsto = new ArrayList();
+        revisando = new ArrayList();
         noHayErrorSintactico = false;
+        faltaDato=true;
         w = new PantallaPrincipal(this);
         w.setBounds(0,0,800,600);
         w.setTitle("Intérprete");
@@ -46,11 +57,14 @@ public class Interprete{
         w.ErroresSem.setText("");
         w.ErroresSin.setText("");
         sinTokens.clear();
+        sinQueEs.clear();
+        sinLinea.clear();
+        sinColumna.clear();
+        esperoEsto.clear();
         tablaS.ids.clear();
         //Si el contenido no esta vacio
         if(!contenido.isEmpty()){
-            
-            String[] tokens, lineas;
+            String[] lineas;
             //temp para ir guardando la palabra o id 
             //caracter es el caracter actual leido
             String temp="", caracter,tipo, ope, pr;
@@ -112,9 +126,9 @@ public class Interprete{
                         }
                         else mandarErrorLexico(i,cont);
                     }
-                    //Si el caracter es un separador y si temp no ha sido ya vaciado
+                    //Si el caracter es un separador y si temp no ha sido vaciado
                     else if(!temp.isEmpty()){
-                        //Pero antes habia alguna palabra
+                        //antes habia alguna palabra?
                         if(temp.matches(".*[a-zA-Z].*")){ 
                                 //Revisarmos si es palabra reservada
                                 if(tablaS.isPR(temp)){
@@ -156,11 +170,14 @@ public class Interprete{
     }
     //Token de la PR, valor del ID o valor del Numero
     public void sintactico(String token, String QueEs, int linea, int columna){
+        int i;
+        //Revisar almacena el metodo que se está revisando
+        String revisar="";
         System.out.println("Analizando Sintactico");
         //Si es el primer valor en ingresar, añadimos todo a la lista
-        if(sinTokens.isEmpty() ){
+        if(sinTokens.isEmpty()){
             //Lo primero que debe esperar debe ser un PRO
-            if(token.equals("PRO")){
+            if(token.equals("pro")){
                 //ken.equals(tablaS.palabrasReservadas.get("pro")
                 sinTokens.add(token);
                 sinQueEs.add(QueEs);
@@ -177,38 +194,64 @@ public class Interprete{
         else{
            //Los primeros 3 valores debe ser afuerza --PRO ID BEGIN--
            if(sinTokens.size() < 3){
-                //Si es el segundo valor en entrar y es correcto
+                //Si es el segundo valor en entrar y coindice con lo que se esperaba
                 if(sinTokens.size() == 1 && QueEs.equals(esperoEsto.get(0))){
+                    //Se hace clear porque solo espera a un BEGIN
                     esperoEsto.clear();
-                    esperoEsto.add(QueEs);
+                    esperoEsto.add("begin");
+                    //Agregamos los valores a los arreglos
+                    sinTokens.add(token);
+                    sinQueEs.add(QueEs);
+                    sinLinea.add(linea);
+                    sinColumna.add(columna);
+                }
+                //Si es el tercer valor ingresado y es correcto
+                else if(sinTokens.size() == 2 && token.equals(esperoEsto.get(0))){
+                    esperoEsto.clear();
+                    //Ahora solo puede esperar métodos y un 'end'
+                    esperoEsto.add("draw");//3
+                    esperoEsto.add("delete");
+                    esperoEsto.add("sleep");
+                    esperoEsto.add("change");//6
+                    esperoEsto.add("end");
+                    //Agregamos los valores
+                    sinTokens.add(token);
+                    sinQueEs.add(QueEs);
+                    sinLinea.add(linea);
+                    sinColumna.add(columna);
+                    
                 }
                 else mandarErrorSintactico(linea, columna);
            }
            //Cuando ya esta bien el los primeros 3 tokens
            else{
-               
+                //Si es un nuevo metodo a revisar
+                if(revisar.isEmpty()){
+                //Comparamos lo que esperamos y lo que tenemos
+                for(i=0; i<esperoEsto.size(); i++){
+                    if(token.equals(esperoEsto.get(i))){
+                        revisar=token;
+                        break;
+                    }
+                }
+                //Si en el ciclo no se cumplio
+                if(revisar.isEmpty())
+                    mandarErrorSintactico(i, columna);
+                //Si si hay coincidencia revisamos el orden
+                else
+                    //Usamos el metodo
+                    revisarOrden(token, revisarPos);
+                
+                sinTokens.add(token);
+                sinQueEs.add(QueEs);
+                sinLinea.add(linea);
+                sinColumna.add(columna);
+               }
+               //Si ya se está revisando un metodo
+               else{
+                   
+               }
            }
-           
-//           String ultimo = sinTokens.get(sinTokens.size()-1);
-//           //Para cuando sean palabras reservadas
-//           if(tablaS.isPR(ultimo)){
-//               switch(ultimo){
-//               //Solo Programa espera un ID después
-//                   case "pro":
-//                       int i;
-//                       for(i=0; i<sinTokens.size()-1; i++){
-//                           
-//                       }
-//                       if(QueEs.equals("ID")) sinTokens.clear();
-//                       else mandarErrorSintactico(linea, columna);
-//                   default:
-//                       if(!QueEs.equals("(")) mandarErrorSintactico(linea, columna);
-//                       else sinTokens.add(token);
-//               }
-//           }
-//           else if(tablaS.isID(ultimo)){
-//               
-//           }
         }
         
         if(QueEs.equals("ID")){
@@ -216,19 +259,36 @@ public class Interprete{
             if(!tablaS.isID(token)) tablaS.agregarID(token, linea, columna);
         }
         
+        if(faltaDato){
+            mandarErrorSintactico(linea, columna, faltaDato);
+        }
         if(noHayErrorSintactico){
             semantico();
         }
     }
     public void semantico(){
-        //Al finalizar la ejecución mostrar y vaciar los datos
-        getArraySintactico();
-        vaciarDatos();
     }
     public void graficar(){   
     }
     //metodo para ir comparanto la tablaS.metodos e Interprete.sin
-    public void revisarOrden(String valorActual){
+    public void revisarOrden(String token, int pos){
+        int i;
+        //Revisamos si el token es el nombre del metodo a revisar
+        if(tablaS.metodos.containsKey(token)){
+            System.out.println("size del arreglo: "+sinTokens.size());
+            //Guardamos el array de la estructura de ese metodo
+            int tamanio = tablaS.metodos.get(token).size();
+            String valor="";
+            for(i=1; i<tamanio; i++){
+                valor = tablaS.metodos.get(token).get(i);
+                revisando.add(valor);
+                System.out.println(valor+"\n");
+            }
+            
+        }
+        else{
+            
+        }
     }
     public void vaciarDatos(){
         tablaS.vaciarIds();
@@ -248,6 +308,12 @@ public class Interprete{
         fila+=1;
         columna+=1;
         w.ErroresSin.append("[Error]: Token inesperado. Linea: "+fila+" Columna: "+columna+"\n");
+    }
+    //Sobre escrito
+    public void mandarErrorSintactico(int fila, int columna, boolean falta){
+        fila+=1;
+        columna+=1;
+        w.ErroresSin.append("[Error]: Falta Token. Linea: "+fila+" Columna: "+columna+"\n");
     }
     public void mandarMensajeSemantico(String mensaje){
         w.ErroresSem.append(mensaje);
