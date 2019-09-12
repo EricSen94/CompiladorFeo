@@ -235,10 +235,11 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_guardarActionPerformed
 
     private void ejecutarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ejecutarActionPerformed
-        
-        Lienzo.add(g);
-        g.repaint();
-        System.out.println("Entro");
+        if(inter.sePuedeGraf){
+            Lienzo.add(inter.graficator);
+            inter.graficator.repaint();
+            System.out.println("Entro a graficar");
+        }
     }//GEN-LAST:event_ejecutarActionPerformed
 
     private void guardarComoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guardarComoActionPerformed

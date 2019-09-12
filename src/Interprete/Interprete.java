@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package Interprete;
+import Compilador.Graficador;
 import javax.swing.JOptionPane;
 import Compilador.PantallaPrincipal;
 import java.util.ArrayList;
@@ -15,6 +16,9 @@ import javafx.scene.text.Text;
  * @author lalos
  */
 public class Interprete{
+    public boolean sePuedeGraf;
+    public Graficador graficator;
+    private String matrizDibujo[][];
     private final tablaSimbolos tablaS;
     private final PantallaPrincipal w;
     //SinTokens es un arreglo para ir llevando los tokens leidos
@@ -27,15 +31,16 @@ public class Interprete{
     //Variable que guardará el valor de lo que espera al siguiente, es un array porque puede esperar varias cosas
     private final ArrayList<String> esperoEsto;
     //Esta bandera es para cuando no haya error en el codigo
-    private final boolean noHayErrorSintactico;
+    private boolean noHayErrorSintactico;
     //Lo mismo pero cuando se queda mocho
-    private final boolean faltaDato;
+    private boolean faltaDato;
     //Para revisar el orden en el sintactico
-    int revisarPos=0;
+    int revisarPos=1;
     //un arreglo que mantiene los valores de algun metodo que se esta revisndo
     ArrayList<String> revisando;
     
     public Interprete(){
+        graficator= new Graficador();
         tablaS = new tablaSimbolos();
         sinTokens = new  ArrayList();
         sinQueEs = new ArrayList();
@@ -44,7 +49,8 @@ public class Interprete{
         esperoEsto = new ArrayList();
         revisando = new ArrayList();
         noHayErrorSintactico = false;
-        faltaDato=true;
+        faltaDato=false;
+        sePuedeGraf=false;
         w = new PantallaPrincipal(this);
         w.setBounds(0,0,800,600);
         w.setTitle("Intérprete");
@@ -169,7 +175,7 @@ public class Interprete{
         else JOptionPane.showMessageDialog(null,"No has escrito nada");
     }
     //Token de la PR, valor del ID o valor del Numero
-    public void sintactico(String token, String QueEs, int linea, int columna){
+    public void sintactico(String token, String QueEs, int fila, int columna){
         int i;
         //Revisar almacena el metodo que se está revisando
         String revisar="";
@@ -181,13 +187,13 @@ public class Interprete{
                 //ken.equals(tablaS.palabrasReservadas.get("pro")
                 sinTokens.add(token);
                 sinQueEs.add(QueEs);
-                sinLinea.add(linea);
+                sinLinea.add(fila);
                 sinColumna.add(columna);
                 //Ahora espera el nombre
                 esperoEsto.add("ID");
             }
             else{
-                mandarErrorSintactico(linea, columna);
+                mandarErrorSintactico(fila, columna);
             }
         }
         //Revisamos lo que deberia esperar ahora en base a la variable
@@ -202,7 +208,7 @@ public class Interprete{
                     //Agregamos los valores a los arreglos
                     sinTokens.add(token);
                     sinQueEs.add(QueEs);
-                    sinLinea.add(linea);
+                    sinLinea.add(fila);
                     sinColumna.add(columna);
                 }
                 //Si es el tercer valor ingresado y es correcto
@@ -217,11 +223,11 @@ public class Interprete{
                     //Agregamos los valores
                     sinTokens.add(token);
                     sinQueEs.add(QueEs);
-                    sinLinea.add(linea);
+                    sinLinea.add(fila);
                     sinColumna.add(columna);
                     
                 }
-                else mandarErrorSintactico(linea, columna);
+                else mandarErrorSintactico(fila, columna);
            }
            //Cuando ya esta bien el los primeros 3 tokens
            else{
@@ -231,7 +237,6 @@ public class Interprete{
                 for(i=0; i<esperoEsto.size(); i++){
                     if(token.equals(esperoEsto.get(i))){
                         revisar=token;
-                        break;
                     }
                 }
                 //Si en el ciclo no se cumplio
@@ -240,55 +245,104 @@ public class Interprete{
                 //Si si hay coincidencia revisamos el orden
                 else
                     //Usamos el metodo
-                    revisarOrden(token, revisarPos);
+                    revisarOrden(token, QueEs, revisarPos,fila, columna);
                 
                 sinTokens.add(token);
                 sinQueEs.add(QueEs);
-                sinLinea.add(linea);
+                sinLinea.add(fila);
                 sinColumna.add(columna);
-               }
-               //Si ya se está revisando un metodo
-               else{
-                   
                }
            }
         }
         
         if(QueEs.equals("ID")){
             //revisamos si no estaba antes para agregarlo
-            if(!tablaS.isID(token)) tablaS.agregarID(token, linea, columna);
+            if(!tablaS.isID(token)) tablaS.agregarID(token, fila, columna);
+            else mandarMensajeSemantico("Ya existe un ID con ese nombre", fila, columna);
         }
         
         if(faltaDato){
-            mandarErrorSintactico(linea, columna, faltaDato);
+          mandarErrorSintactico(fila, columna, faltaDato);
         }
-        if(noHayErrorSintactico){
-            semantico();
-        }
-    }
-    public void semantico(){
-    }
-    public void graficar(){   
     }
     //metodo para ir comparanto la tablaS.metodos e Interprete.sin
-    public void revisarOrden(String token, int pos){
+    public void revisarOrden(String token, String queEs, int pos, int fila, int columna){
         int i;
-        //Revisamos si el token es el nombre del metodo a revisar
-        if(tablaS.metodos.containsKey(token)){
+        //Revisamos si el token es el nombre del metodo a revisar (osea es una metodo)
+        if(tablaS.metodos.containsKey(token) && revisando.isEmpty()){
             System.out.println("size del arreglo: "+sinTokens.size());
             //Guardamos el array de la estructura de ese metodo
             int tamanio = tablaS.metodos.get(token).size();
             String valor="";
+            //Primer valor de lo que se revisa es el nombre del metodo
+            revisando.add(token);
             for(i=1; i<tamanio; i++){
                 valor = tablaS.metodos.get(token).get(i);
+                //Añadimos la estructura
                 revisando.add(valor);
                 System.out.println(valor+"\n");
             }
-            
         }
         else{
+            if(token.equals("end")) revisando.clear();
             
+            if(!revisando.isEmpty()){
+                if(revisando.get(revisarPos).equals(queEs)){
+                    revisarPos++;
+                    noHayErrorSintactico=true;
+                    faltaDato=false;
+                }
+                else{
+                    mandarErrorSintactico(fila, columna);
+                    noHayErrorSintactico=false;
+                    faltaDato=true;
+                }
+                //Si ya se revisó todo, vaciar para revisar otra cosa
+                if(revisarPos>revisando.size()){
+                    if(noHayErrorSintactico){
+                        //Si es un draw
+                        if(revisando.get(0).equals("draw")){
+                            semantico(revisando.get(0), revisando.get(8),Integer.parseInt(revisando.get(2)), Integer.parseInt(revisando.get(3)), Integer.parseInt(revisando.get(6)), fila, columna);
+                        }
+                        //Si es delete
+                        if(revisando.get(0).equals("delete")){
+                            semantico(revisando.get(0), revisando.get(2),0,0, 0, fila, columna);
+                        }
+                    }
+                    revisando.clear();
+                    revisarPos=1;
+                }
+            }
+            else{
+                mandarErrorSintactico(fila, columna); //Token inesperado
+            }
         }
+    }
+    public void semantico(String metodo, String cara, int x, int y, int tam, int fila, int col){
+        
+        if(metodo.equals("draw")){
+            matrizDibujo[0][0]=String.valueOf(x);//x1 //nombre de la cara o si es borrar o algo asi
+            matrizDibujo[0][1]=String.valueOf(y);//y1
+            matrizDibujo[0][2]=Integer.toString(tam);
+            matrizDibujo[0][3]=cara;
+            matrizDibujo[0][4]=metodo;
+        }
+        if(metodo.equals("delete")){
+            matrizDibujo[0][0]=String.valueOf(x);//id
+            matrizDibujo[0][1]="";
+            matrizDibujo[0][2]="";
+            matrizDibujo[0][3]="";
+            matrizDibujo[0][4]=metodo; //
+        }
+        
+        if(!"colicion".equals(graficator.checador(matrizDibujo))){
+            sePuedeGraf=true;
+        }
+        else{
+            mandarMensajeSemantico("Error por colicion", fila, col);
+        }
+    }
+    public void graficar(){   
     }
     public void vaciarDatos(){
         tablaS.vaciarIds();
@@ -309,14 +363,14 @@ public class Interprete{
         columna+=1;
         w.ErroresSin.append("[Error]: Token inesperado. Linea: "+fila+" Columna: "+columna+"\n");
     }
-    //Sobre escrito
+    //Sobrecarga
     public void mandarErrorSintactico(int fila, int columna, boolean falta){
         fila+=1;
         columna+=1;
         w.ErroresSin.append("[Error]: Falta Token. Linea: "+fila+" Columna: "+columna+"\n");
     }
-    public void mandarMensajeSemantico(String mensaje){
-        w.ErroresSem.append(mensaje);
+    public void mandarMensajeSemantico(String mensaje, int fila, int columna){
+        w.ErroresSem.append("[Error]: "+mensaje+"Linea: "+fila+" Columna: "+columna+"\n");
     }
     public void getArraySintactico(){
         System.out.println("Tabla de ID´s");
