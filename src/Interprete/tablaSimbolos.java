@@ -22,19 +22,24 @@ public class tablaSimbolos {
     public ArrayList<ArrayList<String>> ids;
     //metodos es para ir comparando las sentencias del Sintanctico (Interprete.sin) que concuerden con los valores de los metodos
     public Map<String,ArrayList<String>> metodos;
+    public ArrayList <String>draw;
+    public ArrayList <String>delete;
+    public ArrayList <String>sleep;
+    public ArrayList <String>change;
+    public ArrayList <String>pro;
     
     //constructor inicializacion
     public tablaSimbolos(){
+        //Aqui iran los ids que se vayan ocupando
          ids = new ArrayList<>();
-         metodos = new HashMap<>();
-         tipoDato = new HashMap<>();
-         separadores = new HashMap<>();
-         operadores = new HashMap<>();
-         palabrasReservadas = new HashMap<>();
          
+         //Los espacios en blanco
+         separadores = new HashMap<>();
          separadores.put("espacio", " ");
          separadores.put("enter", "\r");
          
+         //Las palabras reservadas ocupadas en el lenguaje
+         palabrasReservadas = new HashMap<>();
          palabrasReservadas.put("pro", "Programa");
          palabrasReservadas.put("begin", "Inicio");
          palabrasReservadas.put("end", "Fin");
@@ -48,15 +53,25 @@ public class tablaSimbolos {
          palabrasReservadas.put("sleepy", "dormida");
          palabrasReservadas.put("serio", "neutral");
          
+         //Tipos de datos que pueden ingresarse en los metodos
+         tipoDato = new HashMap<>();
          tipoDato.put("entero", "int");
          tipoDato.put("flotante", "float");
          tipoDato.put("cadena", "String");
         
+         //A falta de suma, resta ... etc, se colcan estos divisores
+         operadores = new HashMap<>();
          operadores.put("Parentesis Izquierdo", "(");
          operadores.put("Parentesis Derecho", ")");
          operadores.put("Coma", ",");
          
-         ArrayList draw = new ArrayList();
+         //Defimos la estructura de cada uno de los metodos
+         pro = new ArrayList();
+         pro.add("PRO");
+         pro.add("ID");
+         pro.add("BEGIN");
+         
+         draw = new ArrayList();
          draw.add("(");
          draw.add("num");
          draw.add("Coma");
@@ -68,27 +83,31 @@ public class tablaSimbolos {
          draw.add("Coma");
          draw.add("modo");
          draw.add(")");
-         metodos.put("draw", draw);
          
-         ArrayList delete = new ArrayList();
+         delete = new ArrayList();
          delete.add("(");
          delete.add("ID");
          delete.add(")");
-         metodos.put("draw", delete);
          
-         ArrayList sleep = new ArrayList();
+         sleep = new ArrayList();
          sleep.add("(");
          sleep.add("num");
          sleep.add(")");
-         metodos.put("draw", sleep);
          
-         ArrayList change = new ArrayList();
+         change = new ArrayList();
          change.add("(");
          change.add("ID");
          change.add("Coma");
          change.add("modo");
          change.add(")");
-         metodos.put("draw", change);
+         
+         //Agregamos a la lista de métodos, los que tenemos, a manera de usarlo como un id en Base de Datos
+         metodos = new HashMap<>();
+         metodos.put("pro", pro);
+         metodos.put("draw", draw);
+         metodos.put("delete", delete);
+         metodos.put("sleep", sleep);
+         metodos.put("change", change);
          
     }
     //agregar un identificador a la tabla

@@ -15,12 +15,25 @@ import java.util.ArrayList;
 public class Interprete{
     private final tablaSimbolos tablaS;
     private final PantallaPrincipal w;
-    //Sin es un arreglo para ir llevando el conteo de los "nodos" de las sentencias
-    private ArrayList<String> sin;
+    //SinTokens es un arreglo para ir llevando los tokens leidos
+    private ArrayList<String> sinTokens;
+    //sinQueEs lleva el tipo de token 
+    private ArrayList<String> sinQueEs;
+    //Los arreglos de posicion del token
+    private ArrayList <Integer> sinLinea;
+    private ArrayList <Integer> sinColumna;
+    //Esta bandera es para cuando no haya error en el codigo
+    private boolean noHayErrorSintactico;
+    //Variable que guardará el valor de lo que espera al siguiente, es un array porque puede esperar varias cosas
+    private ArrayList<String> esperoEsto;
     
     public Interprete(){
         tablaS = new tablaSimbolos();
-        sin = new  ArrayList();
+        sinTokens = new  ArrayList();
+        sinQueEs = new ArrayList();
+        sinLinea = new ArrayList();
+        sinColumna = new ArrayList();
+        noHayErrorSintactico = false;
         w = new PantallaPrincipal(this);
         w.setBounds(0,0,800,600);
         w.setTitle("Intérprete");
@@ -28,10 +41,11 @@ public class Interprete{
         w.setVisible(true);
     }
     public void lexico(String contenido){
+        //Vaciamos los valores porque en cada ejecucion de la compilación se ocupan estos valores
         w.ErroresL.setText("");
         w.ErroresSem.setText("");
         w.ErroresSin.setText("");
-        sin.clear();
+        sinTokens.clear();
         tablaS.ids.clear();
         //Si el contenido no esta vacio
         if(!contenido.isEmpty()){
@@ -69,32 +83,32 @@ public class Interprete{
                                     pr = tablaS.cualPrES(temp);
                                     mandarMensajeLexico("Linea "+(i+1)+", Columna "+(cont+1)+", Palabra reservada: "+pr+"\n");
                                     //Lo mandamos al sintactico
-                                    sinSem(pr,"pr",i,cont);
+                                    sintactico(pr,"pr",i,cont);
                                     temp="";
                                 }
                                 else{
                                     //Sino era palabra reservada, entonces era ID
                                     mandarMensajeLexico("Linea "+(i+1)+", Columna "+(cont+1)+", ID: "+temp+"\n");
-                                    sinSem(temp,"ID",i,cont);
+                                    sintactico(temp,"ID",i,cont);
                                     temp="";
                                 }
                             }
                             //o si entonces habia un numero?
                             else if(temp.matches(".*[0-9].*")){
                                 mandarMensajeLexico("Linea "+(i+1)+", Columna "+(cont+1)+", Numero: "+temp+"\n");
-                                sinSem(temp,"num",i,cont);
+                                sintactico(temp,"num",i,cont);
                                 temp="";
                             }
                             //Entonces la palabra anterior es una combinacion de letras y numeros (un ID)
                             else{
                                  mandarMensajeLexico("Linea "+(i+1)+", Columna "+(cont+1)+", ID: "+temp+"\n");
-                                 sinSem(temp,"ID",i,cont);
+                                 sintactico(temp,"ID",i,cont);
                                  temp="";
                             }
                             //Ya que revisamos si antes habia algo, pasamos el operador actual al sintactico
                             ope = tablaS.queOpeEs(caracter);
                             mandarMensajeLexico("Linea "+(i+1)+", Columna "+(cont+1)+", operador: "+ope+"\n");
-                            sinSem(caracter, ope, i, cont);
+                            sintactico(caracter, ope, i, cont);
                         }
                         else mandarErrorLexico(i,cont);
                     }
@@ -107,14 +121,14 @@ public class Interprete{
                                     pr = tablaS.cualPrES(temp);
                                     mandarMensajeLexico("Linea "+(i+1)+", Columna "+(cont+1)+", Palabra reservada: "+pr+"\n");
                                     //Lo mandamos al sintactico
-                                    sinSem(pr,"pr",i,cont);
+                                    sintactico(pr,"pr",i,cont);
                                     temp="";
                                 }
                                 else{
                                     //Sino, lo guardamos como ID
                                     mandarMensajeLexico("Linea "+(i+1)+", Columna "+(cont+1)+", ID: "+temp+"\n");
                                     //lo mandamos al sintactico
-                                    sinSem(temp,"ID",i,cont);
+                                    sintactico(temp,"ID",i,cont);
                                     temp="";
                                 }
                             }
@@ -122,13 +136,13 @@ public class Interprete{
                         else if(temp.matches(".*[0-9].*")){
                                 mandarMensajeLexico("Linea "+(i+1)+", Columna "+(cont+1)+", Numero: "+temp+"\n");
                                 //lo mandamos al sintactico
-                                sinSem(temp,"num",i,cont);
+                                sintactico(temp,"num",i,cont);
                                 temp="";
                         }
                         //Entonces la palabra anterior es una combinacion de letras y numeros (un ID)
                         else{
                             mandarMensajeLexico("Linea "+(i+1)+", Columna "+(cont+1)+", ID: "+temp+"\n");
-                            sinSem(temp,"ID",i,cont);
+                            sintactico(temp,"ID",i,cont);
                             temp="";
                         }
                     }
@@ -141,37 +155,75 @@ public class Interprete{
         else JOptionPane.showMessageDialog(null,"No has escrito nada");
     }
     //Token de la PR, valor del ID o valor del Numero
-    public void sinSem(String token, String QueEs, int linea, int columna){
+    public void sintactico(String token, String QueEs, int linea, int columna){
         System.out.println("Analizando Sintactico");
-        if(sin.isEmpty() ){
-            //ken.equals(tablaS.palabrasReservadas.get("pro")
-            sin.add(token);
+        //Si es el primer valor en ingresar, añadimos todo a la lista
+        if(sinTokens.isEmpty() ){
+            //Lo primero que debe esperar debe ser un PRO
+            if(token.equals("PRO")){
+                //ken.equals(tablaS.palabrasReservadas.get("pro")
+                sinTokens.add(token);
+                sinQueEs.add(QueEs);
+                sinLinea.add(linea);
+                sinColumna.add(columna);
+                //Ahora espera el nombre
+                esperoEsto.add("ID");
+            }
+            else{
+                mandarErrorSintactico(linea, columna);
+            }
         }
-        //Revisamos lo que deberia esperar en base al ultimo elemento ingresado
+        //Revisamos lo que deberia esperar ahora en base a la variable
         else{
-            //los primeros 3 valores deben ser PRO nombre BEGIN afuera
-           String ultimo = sin.get(sin.size()-1);
-           //Para cuando sean palabras reservadas
-           if(tablaS.isPR(ultimo)){
-               switch(ultimo){
-               //Solo Programa espera un ID después
-                   case "pro":
-                       if(QueEs.equals("ID")) sin.clear();
-                       else mandarErrorSintactico(linea, columna);
-                   default:
-                       if(!QueEs.equals("(")) mandarErrorSintactico(linea, columna);
-                       else sin.add(token);
-               }
+           //Los primeros 3 valores debe ser afuerza --PRO ID BEGIN--
+           if(sinTokens.size() < 3){
+                //Si es el segundo valor en entrar y es correcto
+                if(sinTokens.size() == 1 && QueEs.equals(esperoEsto.get(0))){
+                    esperoEsto.clear();
+                    esperoEsto.add(QueEs);
+                }
+                else mandarErrorSintactico(linea, columna);
            }
-           else if(tablaS.isID(ultimo)){
+           //Cuando ya esta bien el los primeros 3 tokens
+           else{
                
            }
+           
+//           String ultimo = sinTokens.get(sinTokens.size()-1);
+//           //Para cuando sean palabras reservadas
+//           if(tablaS.isPR(ultimo)){
+//               switch(ultimo){
+//               //Solo Programa espera un ID después
+//                   case "pro":
+//                       int i;
+//                       for(i=0; i<sinTokens.size()-1; i++){
+//                           
+//                       }
+//                       if(QueEs.equals("ID")) sinTokens.clear();
+//                       else mandarErrorSintactico(linea, columna);
+//                   default:
+//                       if(!QueEs.equals("(")) mandarErrorSintactico(linea, columna);
+//                       else sinTokens.add(token);
+//               }
+//           }
+//           else if(tablaS.isID(ultimo)){
+//               
+//           }
         }
         
         if(QueEs.equals("ID")){
             //revisamos si no estaba antes para agregarlo
             if(!tablaS.isID(token)) tablaS.agregarID(token, linea, columna);
         }
+        
+        if(noHayErrorSintactico){
+            semantico();
+        }
+    }
+    public void semantico(){
+        //Al finalizar la ejecución mostrar y vaciar los datos
+        getArraySintactico();
+        vaciarDatos();
     }
     public void graficar(){   
     }

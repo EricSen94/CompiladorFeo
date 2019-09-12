@@ -240,7 +240,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         else JOptionPane.showMessageDialog(null,"Archivo vac�o");
     }                                           
 
-    private void compilarActionPerformed(java.awt.event.ActionEvent evt) {                                         
+    private void compilarActionPerformed(java.awt.event.ActionEvent evt) { 
         inter.lexico(Texto.getText());
         inter.getArraySintactico();
         inter.vaciarDatos();
