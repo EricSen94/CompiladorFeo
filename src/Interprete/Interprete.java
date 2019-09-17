@@ -37,7 +37,7 @@ public class Interprete{
     //Para revisar el orden en el sintactico
     int revisarPos=1;
     //un arreglo que mantiene los valores de algun metodo que se esta revisndo
-    ArrayList<String> revisando;
+    private final ArrayList<String> revisando;
     
     public Interprete(){
         graficator= new Graficador();
@@ -101,33 +101,33 @@ public class Interprete{
                                 //Revisarmos si es palabra reservada
                                 if(tablaS.isPR(temp)){
                                     pr = tablaS.cualPrES(temp);
-                                    mandarMensajeLexico("Linea "+(i+1)+", Columna "+(cont+1)+", Palabra reservada: "+pr+"\n");
+                                    //mandarMensajeLexico("Linea "+(i+1)+", Columna "+(cont+1)+", Palabra reservada: "+pr+"\n");
                                     //Lo mandamos al sintactico
                                     sintactico(pr,"pr",i,cont);
                                     temp="";
                                 }
                                 else{
                                     //Sino era palabra reservada, entonces era ID
-                                    mandarMensajeLexico("Linea "+(i+1)+", Columna "+(cont+1)+", ID: "+temp+"\n");
+                                    //mandarMensajeLexico("Linea "+(i+1)+", Columna "+(cont+1)+", ID: "+temp+"\n");
                                     sintactico(temp,"ID",i,cont);
                                     temp="";
                                 }
                             }
                             //o si entonces habia un numero?
                             else if(temp.matches(".*[0-9].*")){
-                                mandarMensajeLexico("Linea "+(i+1)+", Columna "+(cont+1)+", Numero: "+temp+"\n");
+                                //mandarMensajeLexico("Linea "+(i+1)+", Columna "+(cont+1)+", Numero: "+temp+"\n");
                                 sintactico(temp,"num",i,cont);
                                 temp="";
                             }
                             //Entonces la palabra anterior es una combinacion de letras y numeros (un ID)
                             else{
-                                 mandarMensajeLexico("Linea "+(i+1)+", Columna "+(cont+1)+", ID: "+temp+"\n");
+                                 //mandarMensajeLexico("Linea "+(i+1)+", Columna "+(cont+1)+", ID: "+temp+"\n");
                                  sintactico(temp,"ID",i,cont);
                                  temp="";
                             }
                             //Ya que revisamos si antes habia algo, pasamos el operador actual al sintactico
                             ope = tablaS.queOpeEs(caracter);
-                            mandarMensajeLexico("Linea "+(i+1)+", Columna "+(cont+1)+", operador: "+ope+"\n");
+                            //mandarMensajeLexico("Linea "+(i+1)+", Columna "+(cont+1)+", operador: "+ope+"\n");
                             sintactico(caracter, ope, i, cont);
                         }
                         else mandarErrorLexico(i,cont);
@@ -139,14 +139,14 @@ public class Interprete{
                                 //Revisarmos si es palabra reservada
                                 if(tablaS.isPR(temp)){
                                     pr = tablaS.cualPrES(temp);
-                                    mandarMensajeLexico("Linea "+(i+1)+", Columna "+(cont+1)+", Palabra reservada: "+pr+"\n");
+                                    //mandarMensajeLexico("Linea "+(i+1)+", Columna "+(cont+1)+", Palabra reservada: "+pr+"\n");
                                     //Lo mandamos al sintactico
                                     sintactico(pr,"pr",i,cont);
                                     temp="";
                                 }
                                 else{
                                     //Sino, lo guardamos como ID
-                                    mandarMensajeLexico("Linea "+(i+1)+", Columna "+(cont+1)+", ID: "+temp+"\n");
+                                    //mandarMensajeLexico("Linea "+(i+1)+", Columna "+(cont+1)+", ID: "+temp+"\n");
                                     //lo mandamos al sintactico
                                     sintactico(temp,"ID",i,cont);
                                     temp="";
@@ -154,14 +154,14 @@ public class Interprete{
                             }
                         //Entonces habia un numero?
                         else if(temp.matches(".*[0-9].*")){
-                                mandarMensajeLexico("Linea "+(i+1)+", Columna "+(cont+1)+", Numero: "+temp+"\n");
+                                //mandarMensajeLexico("Linea "+(i+1)+", Columna "+(cont+1)+", Numero: "+temp+"\n");
                                 //lo mandamos al sintactico
                                 sintactico(temp,"num",i,cont);
                                 temp="";
                         }
                         //Entonces la palabra anterior es una combinacion de letras y numeros (un ID)
                         else{
-                            mandarMensajeLexico("Linea "+(i+1)+", Columna "+(cont+1)+", ID: "+temp+"\n");
+                            //mandarMensajeLexico("Linea "+(i+1)+", Columna "+(cont+1)+", ID: "+temp+"\n");
                             sintactico(temp,"ID",i,cont);
                             temp="";
                         }
@@ -193,7 +193,7 @@ public class Interprete{
                 esperoEsto.add("ID");
             }
             else{
-                mandarErrorSintactico(fila, columna);
+                mandarErrorSintactico("Se esperaba la sentencia PRO.",fila, columna);
             }
         }
         //Revisamos lo que deberia esperar ahora en base a la variable
@@ -227,7 +227,10 @@ public class Interprete{
                     sinColumna.add(columna);
                     
                 }
-                else mandarErrorSintactico(fila, columna);
+                else {
+                    if(sinTokens.size()==1) mandarErrorSintactico("Se esperaba un valor ID.",fila, columna);
+                    else mandarErrorSintactico("Se esperaba la palabra reservada BEGIN",fila, columna);
+                }
            }
            //Cuando ya esta bien el los primeros 3 tokens
            else{
@@ -241,7 +244,7 @@ public class Interprete{
                 }
                 //Si en el ciclo no se cumplio
                 if(revisar.isEmpty())
-                    mandarErrorSintactico(i, columna);
+                    mandarErrorSintactico("Se esperaba una palabra reservada.",fila, columna);
                 //Si si hay coincidencia revisamos el orden
                 else
                     //Usamos el metodo
@@ -258,7 +261,7 @@ public class Interprete{
         if(QueEs.equals("ID")){
             //revisamos si no estaba antes para agregarlo
             if(!tablaS.isID(token)) tablaS.agregarID(token, fila, columna);
-            else mandarMensajeSemantico("Ya existe un ID con ese nombre", fila, columna);
+            else mandarErrorMensajeSemantico("Ya existe un ID con ese nombre", fila, columna);
         }
         
         if(faltaDato){
@@ -266,40 +269,47 @@ public class Interprete{
         }
     }
     //metodo para ir comparanto la tablaS.metodos e Interprete.sin
-    public void revisarOrden(String token, String queEs, int pos, int fila, int columna){
+    public void revisarOrden(String valor, String queEs, int pos, int fila, int columna){
         int i;
         //Revisamos si el token es el nombre del metodo a revisar (osea es una metodo)
-        if(tablaS.metodos.containsKey(token) && revisando.isEmpty()){
+        if(tablaS.metodos.containsKey(valor) && revisando.isEmpty()){
             System.out.println("size del arreglo: "+sinTokens.size());
             //Guardamos el array de la estructura de ese metodo
-            int tamanio = tablaS.metodos.get(token).size();
-            String valor="";
+            int tamanio = tablaS.metodos.get(valor).size();
+            String tmp="";
             //Primer valor de lo que se revisa es el nombre del metodo
-            revisando.add(token);
+            revisando.add(valor);
             for(i=1; i<tamanio; i++){
-                valor = tablaS.metodos.get(token).get(i);
+                tmp = tablaS.metodos.get(valor).get(i);
                 //Añadimos la estructura
-                revisando.add(valor);
-                System.out.println(valor+"\n");
+                revisando.add(tmp);
+                System.out.println(tmp+"\n");
             }
         }
+        //sino es que ya estamos revisando una parte avanzada
         else{
-            if(token.equals("end")) revisando.clear();
+            if(valor.equals("end")) revisando.clear();
             
             if(!revisando.isEmpty()){
+                //Revisamos si nuestro valor actual coincide con nuestra estructura
                 if(revisando.get(revisarPos).equals(queEs)){
                     revisarPos++;
                     noHayErrorSintactico=true;
                     faltaDato=false;
+                    //Importante
+                    //Pasar al valor ya revisado el valor actual de nuestro método
+                    revisando.set(revisarPos-1, valor);
                 }
                 else{
-                    mandarErrorSintactico(fila, columna);
+                    mandarErrorSintactico("Se esperaba un valor "+revisando.get(revisarPos)+".",fila, columna);
                     noHayErrorSintactico=false;
                     faltaDato=true;
                 }
                 //Si ya se revisó todo, vaciar para revisar otra cosa
                 if(revisarPos>revisando.size()){
                     if(noHayErrorSintactico){
+                        //La estrucutra cuenta los parentesis y comas.
+                        //revisando.get(0) es el nombre del método
                         //Si es un draw
                         if(revisando.get(0).equals("draw")){
                             semantico(revisando.get(0), revisando.get(8),Integer.parseInt(revisando.get(2)), Integer.parseInt(revisando.get(3)), Integer.parseInt(revisando.get(6)), fila, columna);
@@ -308,13 +318,21 @@ public class Interprete{
                         if(revisando.get(0).equals("delete")){
                             semantico(revisando.get(0), revisando.get(2),0,0, 0, fila, columna);
                         }
+                        //Si es sleep
+                        if(revisando.get(0).equals("sleep")){
+                            semantico(revisando.get(0), revisando.get(2), 0, 0, 0, fila, pos);
+                        }
+                        //Si es change
+                        if(revisando.get(0).equals("change")){
+                            semantico(revisando.get(0), revisando.get(2)+","+revisando.get(4), 0, 0, 0, fila, pos);
+                        }
                     }
                     revisando.clear();
                     revisarPos=1;
                 }
             }
             else{
-                mandarErrorSintactico(fila, columna); //Token inesperado
+                mandarErrorSintactico("Ya se ha sentenciado el fnal del programa",fila, columna); //Token inesperado
             }
         }
     }
@@ -339,7 +357,7 @@ public class Interprete{
             sePuedeGraf=true;
         }
         else{
-            mandarMensajeSemantico("Error por colicion", fila, col);
+            mandarErrorMensajeSemantico("Error por colicion", fila, col);
         }
     }
     public void graficar(){   
@@ -358,10 +376,10 @@ public class Interprete{
     public void mandarMensajeSintactico(String mensaje){
         w.ErroresSin.append(mensaje);
     }
-    public void mandarErrorSintactico(int fila, int columna){
+    public void mandarErrorSintactico(String mensaje, int fila, int columna){
         fila+=1;
         columna+=1;
-        w.ErroresSin.append("[Error]: Token inesperado. Linea: "+fila+" Columna: "+columna+"\n");
+        w.ErroresSin.append("[Error]: "+mensaje+" Linea: "+fila+" Columna: "+columna+"\n");
     }
     //Sobrecarga
     public void mandarErrorSintactico(int fila, int columna, boolean falta){
@@ -369,7 +387,7 @@ public class Interprete{
         columna+=1;
         w.ErroresSin.append("[Error]: Falta Token. Linea: "+fila+" Columna: "+columna+"\n");
     }
-    public void mandarMensajeSemantico(String mensaje, int fila, int columna){
+    public void mandarErrorMensajeSemantico(String mensaje, int fila, int columna){
         w.ErroresSem.append("[Error]: "+mensaje+"Linea: "+fila+" Columna: "+columna+"\n");
     }
     public void getArraySintactico(){
