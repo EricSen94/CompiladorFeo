@@ -293,12 +293,14 @@ public class Interprete{
             if(!revisando.isEmpty()){
                 //Revisamos si nuestro valor actual coincide con nuestra estructura
                 if(revisando.get(revisarPos).equals(queEs)){
+                    //////////////////////////////////////////////////////////////
+                    //Importante
+                    //Pasar al valor ya revisado actual de nuestro método al arreglo de revisado
+                    //Se podria ocupar otro arreglo, pero seria exactamente igual
+                    revisando.set(revisarPos, valor);
                     revisarPos++;
                     noHayErrorSintactico=true;
                     faltaDato=false;
-                    //Importante
-                    //Pasar al valor ya revisado el valor actual de nuestro método
-                    revisando.set(revisarPos-1, valor);
                 }
                 else{
                     mandarErrorSintactico("Se esperaba un valor "+revisando.get(revisarPos)+".",fila, columna);
@@ -338,21 +340,26 @@ public class Interprete{
     }
     public void semantico(String metodo, String cara, int x, int y, int tam, int fila, int col){
         
-        if(metodo.equals("draw")){
-            matrizDibujo[0][0]=String.valueOf(x);//x1 //nombre de la cara o si es borrar o algo asi
-            matrizDibujo[0][1]=String.valueOf(y);//y1
-            matrizDibujo[0][2]=Integer.toString(tam);
-            matrizDibujo[0][3]=cara;
-            matrizDibujo[0][4]=metodo;
+        switch(metodo){
+            case "draw":
+                matrizDibujo[0][0]=String.valueOf(x);//x1 //nombre de la cara o si es borrar o algo asi
+                matrizDibujo[0][1]=String.valueOf(y);//y1
+                matrizDibujo[0][2]=Integer.toString(tam);
+                matrizDibujo[0][3]=cara;
+                matrizDibujo[0][4]=metodo;
+                break;
+            case "delete":
+                matrizDibujo[0][0]=String.valueOf(x);//id
+                matrizDibujo[0][1]="";
+                matrizDibujo[0][2]="";
+                matrizDibujo[0][3]="";
+                matrizDibujo[0][4]=metodo; //
+                break;
+            case "sleep":
+                break;
+            case "change":
+                break;
         }
-        if(metodo.equals("delete")){
-            matrizDibujo[0][0]=String.valueOf(x);//id
-            matrizDibujo[0][1]="";
-            matrizDibujo[0][2]="";
-            matrizDibujo[0][3]="";
-            matrizDibujo[0][4]=metodo; //
-        }
-        
         if(!"colicion".equals(graficator.checador(matrizDibujo))){
             sePuedeGraf=true;
         }
@@ -360,7 +367,7 @@ public class Interprete{
             mandarErrorMensajeSemantico("Error por colicion", fila, col);
         }
     }
-    public void graficar(){   
+    public void graficar(String array[][]){   
     }
     public void vaciarDatos(){
         tablaS.vaciarIds();

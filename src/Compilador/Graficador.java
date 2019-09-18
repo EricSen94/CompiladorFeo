@@ -73,14 +73,14 @@ public class Graficador extends JPanel {
         int i=0;
         
         while(matrizDibujo[i][0]!=null){
-             if(matrizDibujo[i][4]=="dormir"){
+             if(matrizDibujo[i][4]=="sleep"){
                  try{
                      sleep(Integer.parseInt(matrizDibujo[i][0]));}
                  catch (InterruptedException ex) {
                      Logger.getLogger(Graficador.class.getName()).log(Level.SEVERE, null, ex);
                  }
             }
-             if(matrizDibujo[i][4]=="borrar"){
+             if(matrizDibujo[i][4]=="draw"){
                  for(int h=0;h<tamaño;h++){
                      if(matrizDibujo[h][3]==matrizDibujo[i][0]){
                          int aux4=h;
