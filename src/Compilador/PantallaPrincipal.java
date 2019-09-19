@@ -23,6 +23,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     FileInputStream entrada;
     FileOutputStream salida;
     Graficador g;
+    boolean compilado=false;
     
     public PantallaPrincipal(Interprete I) {
         initComponents();
@@ -235,10 +236,14 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_guardarActionPerformed
 
     private void ejecutarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ejecutarActionPerformed
-        if(inter.sePuedeGraf){
+        if(inter.sePuedeGraf && compilado){
             Lienzo.add(inter.graficator);
             inter.graficator.repaint();
+            compilado=false;
             System.out.println("Entro a graficar");
+        }
+        else{
+            System.out.println("No se puede graficar");
         }
     }//GEN-LAST:event_ejecutarActionPerformed
 
@@ -266,6 +271,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         inter.lexico(Texto.getText());
         inter.getArraySintactico();
         inter.vaciarDatos();
+        compilado=true;
     }//GEN-LAST:event_compilarActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
