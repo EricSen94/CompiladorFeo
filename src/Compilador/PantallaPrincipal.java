@@ -23,7 +23,6 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     FileInputStream entrada;
     FileOutputStream salida;
     Graficador g;
-    boolean compilado=false;
     
     public PantallaPrincipal(Interprete I) {
         initComponents();
@@ -81,9 +80,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         abrir = new javax.swing.JMenuItem();
         guardar = new javax.swing.JMenuItem();
         guardarComo = new javax.swing.JMenuItem();
-        jMenu2 = new javax.swing.JMenu();
-        compilar = new javax.swing.JMenuItem();
-        ejecutar = new javax.swing.JMenuItem();
+        ejecutation = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -142,25 +139,18 @@ public class PantallaPrincipal extends javax.swing.JFrame {
 
         jMenuBar1.add(jMenu1);
 
-        jMenu2.setText("Compilar/Ejecutar");
-
-        compilar.setText("Compilar");
-        compilar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                compilarActionPerformed(evt);
+        ejecutation.setText("Ejecutar");
+        ejecutation.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                ejecutationMouseClicked(evt);
             }
         });
-        jMenu2.add(compilar);
-
-        ejecutar.setText("Ejecutar");
-        ejecutar.addActionListener(new java.awt.event.ActionListener() {
+        ejecutation.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ejecutarActionPerformed(evt);
+                ejecutationActionPerformed(evt);
             }
         });
-        jMenu2.add(ejecutar);
-
-        jMenuBar1.add(jMenu2);
+        jMenuBar1.add(ejecutation);
 
         setJMenuBar(jMenuBar1);
 
@@ -235,18 +225,6 @@ public class PantallaPrincipal extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null,"Archivo vac�o");
     }//GEN-LAST:event_guardarActionPerformed
 
-    private void ejecutarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ejecutarActionPerformed
-        if(inter.sePuedeGraf && compilado){
-            Lienzo.add(inter.graficator);
-            inter.graficator.repaint();
-            compilado=false;
-            System.out.println("Entro a graficar");
-        }
-        else{
-            System.out.println("No se puede graficar");
-        }
-    }//GEN-LAST:event_ejecutarActionPerformed
-
     private void guardarComoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guardarComoActionPerformed
         if( !"".equals(Texto.getText()) ){
             if(seleccionar.showDialog(null,"Guardar")==JFileChooser.APPROVE_OPTION){
@@ -267,29 +245,30 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         else JOptionPane.showMessageDialog(null,"Archivo vac�o");
     }//GEN-LAST:event_guardarComoActionPerformed
 
-    private void compilarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_compilarActionPerformed
+    private void ejecutationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ejecutationActionPerformed
+    
+    }//GEN-LAST:event_ejecutationActionPerformed
+
+    private void ejecutationMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ejecutationMouseClicked
         inter.lexico(Texto.getText());
         inter.getArraySintactico();
         inter.vaciarDatos();
-        compilado=true;
-    }//GEN-LAST:event_compilarActionPerformed
+    }//GEN-LAST:event_ejecutationMouseClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JTextArea ErroresL;
     public javax.swing.JTextArea ErroresSem;
     public javax.swing.JTextArea ErroresSin;
-    private java.awt.ScrollPane Lienzo;
+    public java.awt.ScrollPane Lienzo;
     private javax.swing.JTextArea Texto;
     private javax.swing.JMenuItem abrir;
-    private javax.swing.JMenuItem compilar;
-    private javax.swing.JMenuItem ejecutar;
+    private javax.swing.JMenu ejecutation;
     private javax.swing.JMenuItem guardar;
     private javax.swing.JMenuItem guardarComo;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
