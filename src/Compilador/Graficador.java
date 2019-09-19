@@ -23,7 +23,15 @@ public class Graficador extends JPanel {
         this.setBounds(0,0,250,500);
     }
     public void addMatriz(String matrizD[][]){
-        this.matrizDibujo=matrizD;
+        int tamanio=matrizDibujo.length;
+        String temp[][];
+        temp=matrizDibujo;
+        int i;
+        //Agregamos los nuevos valores a la matriz
+        for(i=tamanio+1; i<=matrizD.length; i++){
+            temp[i][0]=matrizDibujo[i][0];
+        }
+        this.matrizDibujo=temp;
     }
     public String checador(String matriz2D[][]){
         String bandera="NP";
@@ -73,6 +81,7 @@ public class Graficador extends JPanel {
         int i=0;
         
         while(matrizDibujo[i][0]!=null){
+            //duerme como se indique, lo toma de la pos 4, espera los segundos guardados en la pos 0
              if(matrizDibujo[i][4]=="sleep"){
                  try{
                      sleep(Integer.parseInt(matrizDibujo[i][0]));}
@@ -80,8 +89,10 @@ public class Graficador extends JPanel {
                      Logger.getLogger(Graficador.class.getName()).log(Level.SEVERE, null, ex);
                  }
             }
-             if(matrizDibujo[i][4]=="draw"){
+             //revisa si no se debe borrar una cara, revisa la poscicion 4 y reccorre eliminando, en la pos 0 esta el nombre de la cara a borrar
+             if(matrizDibujo[i][4]=="delete"){
                  for(int h=0;h<tamaño;h++){
+                     //Buscamos en toda la matriz algun valor de dibujar cara en la posicion 3
                      if(matrizDibujo[h][3]==matrizDibujo[i][0]){
                          int aux4=h;
                          while(matrizDibujo[aux4+1][0]!=null){
@@ -93,12 +104,21 @@ public class Graficador extends JPanel {
                             aux4++;
                          }
                          matrizDibujo[aux4]=null;
-                         
-                         
                      }
                  }
+                 if(matrizDibujo[i][4]=="change"){
+                     //Buscamos en toda la matriz el valor que vamos a cambiar
+                     for(int h=0;h<i;h++){
+                         //Buscamos las caras en los métodos de draw en donde coincida la cara
+                         if(matrizDibujo[h][3]==matrizDibujo[i][1] && h!=i){
+                             matrizDibujo[h][3]=matrizDibujo[i][0];
+                         }
+                     }
+                 }
+             //Para no hacer las siguientes comparaciones de if
              break;
              }
+             //En caso que sea draw
             if(matrizDibujo[i][4]=="feliz"){
                
                 g.setColor(Color.YELLOW);

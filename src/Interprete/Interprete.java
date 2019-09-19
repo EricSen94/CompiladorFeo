@@ -23,11 +23,6 @@ public class Interprete{
     private final PantallaPrincipal w;
     //SinTokens es un arreglo para ir llevando los tokens leidos
     private final ArrayList<String> sinTokens;
-    //sinQueEs lleva el tipo de token 
-    private final ArrayList<String> sinQueEs;
-    //Los arreglos de posicion del token
-    private final ArrayList<Integer> sinLinea;
-    private final ArrayList<Integer> sinColumna;
     //Variable que guardará el valor de lo que espera al siguiente, es un array porque puede esperar varias cosas
     private final ArrayList<String> esperoEsto;
     //Esta bandera es para cuando no haya error en el codigo
@@ -36,6 +31,7 @@ public class Interprete{
     private boolean faltaDato;
     //Para revisar el orden en el sintactico
     int revisarPos=1;
+    private String revisar="";
     //un arreglo que mantiene los valores de algun metodo que se esta revisndo
     private final ArrayList<String> revisando;
     
@@ -43,9 +39,6 @@ public class Interprete{
         graficator= new Graficador();
         tablaS = new tablaSimbolos();
         sinTokens = new  ArrayList();
-        sinQueEs = new ArrayList();
-        sinLinea = new ArrayList();
-        sinColumna = new ArrayList();
         esperoEsto = new ArrayList();
         revisando = new ArrayList();
         noHayErrorSintactico = false;
@@ -63,9 +56,6 @@ public class Interprete{
         w.ErroresSem.setText("");
         w.ErroresSin.setText("");
         sinTokens.clear();
-        sinQueEs.clear();
-        sinLinea.clear();
-        sinColumna.clear();
         esperoEsto.clear();
         tablaS.ids.clear();
         //Si el contenido no esta vacio
@@ -178,7 +168,6 @@ public class Interprete{
     public void sintactico(String token, String QueEs, int fila, int columna){
         int i;
         //Revisar almacena el metodo que se está revisando
-        String revisar="";
         System.out.println("Analizando Sintactico");
         //Si es el primer valor en ingresar, añadimos todo a la lista
         if(sinTokens.isEmpty()){
@@ -186,9 +175,6 @@ public class Interprete{
             if(token.equals("pro")){
                 //ken.equals(tablaS.palabrasReservadas.get("pro")
                 sinTokens.add(token);
-                sinQueEs.add(QueEs);
-                sinLinea.add(fila);
-                sinColumna.add(columna);
                 //Ahora espera el nombre
                 esperoEsto.add("ID");
             }
@@ -205,14 +191,9 @@ public class Interprete{
                     //Se hace clear porque solo espera a un BEGIN
                     esperoEsto.clear();
                     esperoEsto.add("begin");
-                    //Agregamos los valores a los arreglos
-                    sinTokens.add(token);
-                    sinQueEs.add(QueEs);
-                    sinLinea.add(fila);
-                    sinColumna.add(columna);
-                }
+                }else
                 //Si es el tercer valor ingresado y es correcto
-                else if(sinTokens.size() == 2 && token.equals(esperoEsto.get(0))){
+                if(sinTokens.size() == 2 && token.equals(esperoEsto.get(0))){
                     esperoEsto.clear();
                     //Ahora solo puede esperar métodos y un 'end'
                     esperoEsto.add("draw");//3
@@ -220,17 +201,13 @@ public class Interprete{
                     esperoEsto.add("sleep");
                     esperoEsto.add("change");//6
                     esperoEsto.add("end");
-                    //Agregamos los valores
-                    sinTokens.add(token);
-                    sinQueEs.add(QueEs);
-                    sinLinea.add(fila);
-                    sinColumna.add(columna);
-                    
                 }
-                else {
+                else{
                     if(sinTokens.size()==1) mandarErrorSintactico("Se esperaba un valor ID.",fila, columna);
-                    else mandarErrorSintactico("Se esperaba la palabra reservada BEGIN",fila, columna);
+                    else if(sinTokens.size()==2) mandarErrorSintactico("Se esperaba la palabra reservada BEGIN",fila, columna);
                 }
+                //Agregamos los valores
+                sinTokens.add(token);
            }
            //Cuando ya esta bien el los primeros 3 tokens
            else{
@@ -245,24 +222,16 @@ public class Interprete{
                 //Si en el ciclo no se cumplio
                 if(revisar.isEmpty())
                     mandarErrorSintactico("Se esperaba una palabra reservada.",fila, columna);
-                //Si si hay coincidencia revisamos el orden
+                //Si hay coincidencia revisamos el orden
                 else
-                    //Usamos el metodo
                     revisarOrden(token, QueEs, revisarPos,fila, columna);
                 
                 sinTokens.add(token);
-                sinQueEs.add(QueEs);
-                sinLinea.add(fila);
-                sinColumna.add(columna);
                }
            }
         }
-        
-        if(QueEs.equals("ID")){
-            //revisamos si no estaba antes para agregarlo
-            if(!tablaS.isID(token)) tablaS.agregarID(token, fila, columna);
-            else mandarErrorMensajeSemantico("Ya existe un ID con ese nombre", fila, columna);
-        }
+        if(QueEs.equals("ID"))
+            tablaS.agregarID(token, fila, columna);
         
         if(faltaDato){
           mandarErrorSintactico(fila, columna, faltaDato);
@@ -326,6 +295,9 @@ public class Interprete{
                         }
                         //Si es change
                         if(revisando.get(0).equals("change")){
+                            //como el metodo semantico no cuenta con 3 String de parámetros, le agregamos al parámetro de cara las 2
+                            //Primero la cara original, y luego la nueva
+                            //Separado por una coma
                             semantico(revisando.get(0), revisando.get(2)+","+revisando.get(4), 0, 0, 0, fila, pos);
                         }
                     }
@@ -340,34 +312,49 @@ public class Interprete{
     }
     public void semantico(String metodo, String cara, int x, int y, int tam, int fila, int col){
         
-        switch(metodo){
-            case "draw":
-                matrizDibujo[0][0]=String.valueOf(x);//x1 //nombre de la cara o si es borrar o algo asi
-                matrizDibujo[0][1]=String.valueOf(y);//y1
-                matrizDibujo[0][2]=Integer.toString(tam);
-                matrizDibujo[0][3]=cara;
-                matrizDibujo[0][4]=metodo;
-                break;
-            case "delete":
-                matrizDibujo[0][0]=String.valueOf(x);//id
-                matrizDibujo[0][1]="";
-                matrizDibujo[0][2]="";
-                matrizDibujo[0][3]="";
-                matrizDibujo[0][4]=metodo; //
-                break;
-            case "sleep":
-                break;
-            case "change":
-                break;
-        }
         if(!"colicion".equals(graficator.checador(matrizDibujo))){
             sePuedeGraf=true;
         }
         else{
             mandarErrorMensajeSemantico("Error por colicion", fila, col);
         }
-    }
-    public void graficar(String array[][]){   
+        if(sePuedeGraf){
+            switch(metodo){
+                case "draw":
+                    matrizDibujo[0][0]=String.valueOf(x);//x1 //nombre de la cara o si es borrar o algo asi
+                    matrizDibujo[0][1]=String.valueOf(y);//y1
+                    matrizDibujo[0][2]=Integer.toString(tam);
+                    matrizDibujo[0][3]=cara;
+                    matrizDibujo[0][4]=metodo;
+                    break;
+                case "delete":
+                    matrizDibujo[0][0]=String.valueOf(x);//id
+                    matrizDibujo[0][1]="";
+                    matrizDibujo[0][2]="";
+                    matrizDibujo[0][3]="";
+                    matrizDibujo[0][4]=metodo; //
+                    break;
+                case "sleep":
+                    matrizDibujo[0][0]=String.valueOf(x);//id
+                    matrizDibujo[0][1]="";
+                    matrizDibujo[0][2]="";
+                    matrizDibujo[0][3]="";
+                    matrizDibujo[0][4]=metodo; //
+                    break;
+                case "change":
+                    String[] caras = cara.split(",");
+                    matrizDibujo[0][0]=caras[1];//nueva cara
+                    matrizDibujo[0][1]=caras[0];//Cara original
+                    matrizDibujo[0][2]="";
+                    matrizDibujo[0][3]="";
+                    matrizDibujo[0][4]=metodo; //
+                    break;
+                default:
+                    mandarErrorMensajeSemantico("No se pudo elegir correctamente el método.",fila, col);
+                    break;
+            }
+            graficator.addMatriz(matrizDibujo);
+        }
     }
     public void vaciarDatos(){
         tablaS.vaciarIds();
