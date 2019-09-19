@@ -8,8 +8,6 @@ import Compilador.Graficador;
 import javax.swing.JOptionPane;
 import Compilador.PantallaPrincipal;
 import java.util.ArrayList;
-import java.util.stream.Stream;
-import javafx.scene.text.Text;
 
 /**
  *
@@ -192,43 +190,43 @@ public class Interprete{
                     esperoEsto.clear();
                     esperoEsto.add("begin");
                 }else
-                //Si es el tercer valor ingresado y es correcto
-                if(sinTokens.size() == 2 && token.equals(esperoEsto.get(0))){
-                    esperoEsto.clear();
-                    //Ahora solo puede esperar métodos y un 'end'
-                    esperoEsto.add("draw");//3
-                    esperoEsto.add("delete");
-                    esperoEsto.add("sleep");
-                    esperoEsto.add("change");//6
-                    esperoEsto.add("end");
-                }
-                else{
-                    if(sinTokens.size()==1) mandarErrorSintactico("Se esperaba un valor ID.",fila, columna);
-                    else if(sinTokens.size()==2) mandarErrorSintactico("Se esperaba la palabra reservada BEGIN",fila, columna);
-                }
+                    //Si es el tercer valor ingresado y es correcto
+                    if(sinTokens.size() == 2 && token.equals(esperoEsto.get(0))){
+                        esperoEsto.clear();
+                        //Ahora solo puede esperar métodos y un 'end'
+                        esperoEsto.add("draw");//3
+                        esperoEsto.add("delete");
+                        esperoEsto.add("sleep");
+                        esperoEsto.add("change");//6
+                        esperoEsto.add("end");
+                    }
+                    else{
+                        if(sinTokens.size()==1) mandarErrorSintactico("Se esperaba un valor ID.",fila, columna);
+                        else if(sinTokens.size()==2) mandarErrorSintactico("Se esperaba la palabra reservada BEGIN",fila, columna);
+                    }
                 //Agregamos los valores
                 sinTokens.add(token);
-           }
-           //Cuando ya esta bien el los primeros 3 tokens
-           else{
-                //Si es un nuevo metodo a revisar
-                if(revisar.isEmpty()){
-                //Comparamos lo que esperamos y lo que tenemos
-                for(i=0; i<esperoEsto.size(); i++){
-                    if(token.equals(esperoEsto.get(i))){
-                        revisar=token;
-                    }
+            }
+            //Cuando ya esta bien el los primeros 3 tokens
+            else{
+                 //Si es un nuevo metodo a revisar
+                 if(revisar.isEmpty()){
+                 //Comparamos lo que esperamos y lo que tenemos
+                 for(i=0; i<esperoEsto.size(); i++){
+                     if(token.equals(esperoEsto.get(i))){
+                         revisar=token;
+                     }
+                 }
+                 //Si en el ciclo no se cumplio
+                 if(revisar.isEmpty())
+                     mandarErrorSintactico("Se esperaba una palabra reservada.",fila, columna);
+                 //Si hay coincidencia revisamos el orden
+                 else
+                     revisarOrden(token, QueEs, revisarPos,fila, columna);
+
+                 sinTokens.add(token);
                 }
-                //Si en el ciclo no se cumplio
-                if(revisar.isEmpty())
-                    mandarErrorSintactico("Se esperaba una palabra reservada.",fila, columna);
-                //Si hay coincidencia revisamos el orden
-                else
-                    revisarOrden(token, QueEs, revisarPos,fila, columna);
-                
-                sinTokens.add(token);
-               }
-           }
+            }
         }
         if(QueEs.equals("ID"))
             tablaS.agregarID(token, fila, columna);
@@ -308,6 +306,14 @@ public class Interprete{
                 }
             }
             else{
+                if(sePuedeGraf){
+                    w.Lienzo.add(graficator);
+                    graficator.repaint();
+                    System.out.println("Entro a graficar");
+                }
+                else{
+                    System.out.println("No se puede graficar");
+                }
                 mandarErrorSintactico("Ya se ha sentenciado el fnal del programa",fila, columna); //Token inesperado
             }
         }
@@ -347,7 +353,7 @@ public class Interprete{
                     mandarErrorMensajeSemantico("No se pudo elegir correctamente el método.",fila, col);
                     break;
             }
-        if(graficator.checador(matrizDibujo) == "NP"){
+        if("NP".equals(graficator.checador(matrizDibujo))){
             sePuedeGraf=true;
             System.out.println("Se puede graficar!");
             graficator.addMatriz(matrizDibujo);
