@@ -112,7 +112,19 @@ public class tablaSimbolos {
         nuevo.add(nombre);
         nuevo.add(Integer.toString(linea));
         nuevo.add(Integer.toString(columna));
-        ids.add(nuevo);
+        if(isID(nombre)){
+            int pos=0;
+            for(int i=0; i<ids.size(); i++){
+                if( ids.get(i).get(0).equals(nombre) ){
+                    pos=i;
+                    break;
+                }
+            }
+            ids.set(pos, nuevo);
+        }
+        else{
+            ids.add(nuevo);
+        }
     }
     //ver si el token es palabra reservada
     public boolean isPR(String token){
