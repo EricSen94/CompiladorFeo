@@ -239,6 +239,7 @@ public class Interprete{
     }
     //metodo para ir comparanto la tablaS.metodos e Interprete.sin
     public void revisarOrden(String valor, String queEs, int pos, int fila, int columna){
+        System.out.println("Revisando orden...");
         int i;
         //Revisamos si el token es el nombre del metodo a revisar (osea es una metodo)
         if(tablaS.metodos.containsKey(valor) && revisando.isEmpty()){
@@ -248,6 +249,7 @@ public class Interprete{
             String tmp="";
             //Primer valor de lo que se revisa es el nombre del metodo
             revisando.add(valor);
+            System.out.println(valor+"\n");
             for(i=1; i<tamanio; i++){
                 tmp = tablaS.metodos.get(valor).get(i);
                 //Añadimos la estructura
@@ -311,14 +313,6 @@ public class Interprete{
         }
     }
     public void semantico(String metodo, String cara, int x, int y, int tam, int fila, int col){
-        
-        if(!"colicion".equals(graficator.checador(matrizDibujo))){
-            sePuedeGraf=true;
-        }
-        else{
-            mandarErrorMensajeSemantico("Error por colicion", fila, col);
-        }
-        if(sePuedeGraf){
             switch(metodo){
                 case "draw":
                     matrizDibujo[0][0]=String.valueOf(x);//x1 //nombre de la cara o si es borrar o algo asi
@@ -353,7 +347,13 @@ public class Interprete{
                     mandarErrorMensajeSemantico("No se pudo elegir correctamente el método.",fila, col);
                     break;
             }
+        if(graficator.checador(matrizDibujo) == "NP"){
+            sePuedeGraf=true;
+            System.out.println("Se puede graficar!");
             graficator.addMatriz(matrizDibujo);
+        }
+        else{
+            mandarErrorMensajeSemantico("Error por colicion", fila, col);
         }
     }
     public void vaciarDatos(){

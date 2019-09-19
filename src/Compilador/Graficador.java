@@ -23,15 +23,20 @@ public class Graficador extends JPanel {
         this.setBounds(0,0,250,500);
     }
     public void addMatriz(String matrizD[][]){
-        int tamanio=matrizDibujo.length;
-        String temp[][];
-        temp=matrizDibujo;
-        int i;
-        //Agregamos los nuevos valores a la matriz
-        for(i=tamanio+1; i<=matrizD.length; i++){
-            temp[i][0]=matrizDibujo[i][0];
+        if(matrizDibujo==null){
+            matrizDibujo=matrizD;
         }
-        this.matrizDibujo=temp;
+        else{
+            int tamanio=matrizDibujo.length;
+            String temp[][];
+            temp=matrizDibujo;
+            int i;
+            //Agregamos los nuevos valores a la matriz
+            for(i=tamanio+1; i<=matrizD.length; i++){
+                temp[i][0]=matrizDibujo[i][0];
+            }
+            this.matrizDibujo=temp;
+        }
     }
     public String checador(String matriz2D[][]){
         String bandera="NP";
