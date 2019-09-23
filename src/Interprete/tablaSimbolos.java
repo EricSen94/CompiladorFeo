@@ -17,9 +17,9 @@ public class tablaSimbolos {
     public Map<String,String> palabrasReservadas;
     public Map<String,String> operadores;
     public Map<String,String> separadores;
-    public Map<String,String> tipoDato;
     public Map<String,Integer> lineas;
     public ArrayList<ArrayList<String>> ids;
+    public ArrayList<ArrayList<String>> arrayLexico;
     //metodos es para ir comparando las sentencias del Sintanctico (Interprete.sin) que concuerden con los valores de los metodos
     public Map<String,ArrayList<String>> metodos;
     public ArrayList <String>draw;
@@ -31,6 +31,7 @@ public class tablaSimbolos {
     public tablaSimbolos(){
         //Aqui iran los ids que se vayan ocupando
          ids = new ArrayList<>();
+         arrayLexico = new ArrayList<>();
          
          //Los espacios en blanco, saltos y final del archivo.
          separadores = new HashMap<>();
@@ -54,13 +55,7 @@ public class tablaSimbolos {
          palabrasReservadas.put("sleepy", "dormida");
          palabrasReservadas.put("serio", "neutral");
          palabrasReservadas.put("end", "Fin");
-         
-         //Tipos de datos que pueden ingresarse en los metodos
-         tipoDato = new HashMap<>();
-         tipoDato.put("entero", "int");
-         tipoDato.put("flotante", "float");
-         tipoDato.put("cadena", "String");
-        
+                 
          //A falta de suma, resta ... etc, se colcan estos divisores
          operadores = new HashMap<>();
          operadores.put("Parentesis Izquierdo", "(");
@@ -107,11 +102,10 @@ public class tablaSimbolos {
          
     }
     //agregar un identificador a la tabla
-    public void agregarID(String nombre,int linea, int columna){
+    public void agregarID(String nombre,int linea){
         ArrayList<String> nuevo = new ArrayList<>();
         nuevo.add(nombre);
         nuevo.add(Integer.toString(linea));
-        nuevo.add(Integer.toString(columna));
         if(isID(nombre)){
             int pos=0;
             for(int i=0; i<ids.size(); i++){
@@ -157,18 +151,6 @@ public class tablaSimbolos {
             //Si el valor del token es el mismo al regisro
             if(entrada.getValue().equals(token)){
                 valor = (String)(entrada.getKey());
-                break;
-            }
-        }
-        return valor;
-    }
-    
-    public String queTipoEs(String token){
-        String valor="";
-        for( Map.Entry entrada : tipoDato.entrySet()){
-            //Si el valor del token es el mismo al regisro
-            if(entrada.getValue().equals(token.getClass())){
-                valor = (String)(entrada.getValue());
                 break;
             }
         }
