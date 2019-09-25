@@ -39,7 +39,7 @@ public class tablaSimbolos {
          separadores.put("enter1", "\r");
          separadores.put("enter2", "\n");
          separadores.put("tab", "\t");
-         separadores.put("tab", "/0");
+         separadores.put("endfile", "/0");
          
          //Las palabras reservadas ocupadas en el lenguaje
          palabrasReservadas = new HashMap<>();
@@ -65,11 +65,11 @@ public class tablaSimbolos {
          //Defimos la estructura de cada uno de los metodos
          draw = new ArrayList();
          draw.add("(");
-         draw.add("num");
+         draw.add("number");
          draw.add("Coma");
-         draw.add("num");
+         draw.add("number");
          draw.add("Coma");
-         draw.add("num");
+         draw.add("number");
          draw.add("Coma");
          draw.add("ID");
          draw.add("Coma");
@@ -83,7 +83,7 @@ public class tablaSimbolos {
          
          sleep = new ArrayList();
          sleep.add("(");
-         sleep.add("num");
+         sleep.add("number");
          sleep.add(")");
          
          change = new ArrayList();
