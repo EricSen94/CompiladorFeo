@@ -351,24 +351,24 @@ public class Interprete{
                 case "draw":
                     matrizDibujo[contFunciones][0]=String.valueOf(x);//x1 //nombre de la cara o si es borrar o algo asi
                     matrizDibujo[contFunciones][1]=String.valueOf(y);//y1
-                    matrizDibujo[contFunciones][2]=Integer.toString(tam);
+                    matrizDibujo[contFunciones][2]=String.valueOf(tam);
                     matrizDibujo[contFunciones][3]=cara;
                     matrizDibujo[contFunciones][4]=metodo;
                     contFunciones++;
                     break;
                 case "delete":
                     matrizDibujo[contFunciones][0]=String.valueOf(x);//id
-                    matrizDibujo[contFunciones][1]="";
-                    matrizDibujo[contFunciones][2]="";
-                    matrizDibujo[contFunciones][3]="";
+                    matrizDibujo[contFunciones][1]="0";
+                    matrizDibujo[contFunciones][2]="0";
+                    matrizDibujo[contFunciones][3]="0";
                     matrizDibujo[contFunciones][4]=metodo; //
                     contFunciones++;
                     break;
                 case "sleep":
                     matrizDibujo[contFunciones][0]=String.valueOf(x);//id
-                    matrizDibujo[contFunciones][1]="";
-                    matrizDibujo[contFunciones][2]="";
-                    matrizDibujo[contFunciones][3]="";
+                    matrizDibujo[contFunciones][1]="0";
+                    matrizDibujo[contFunciones][2]="0";
+                    matrizDibujo[contFunciones][3]="0";
                     matrizDibujo[contFunciones][4]=metodo; //
                     contFunciones++;
                     break;
@@ -376,8 +376,8 @@ public class Interprete{
                     String[] caras = cara.split(",");
                     matrizDibujo[contFunciones][0]=caras[1];//nuevo estado
                     matrizDibujo[contFunciones][1]=caras[0];//Cara original
-                    matrizDibujo[contFunciones][2]="";
-                    matrizDibujo[contFunciones][3]="";
+                    matrizDibujo[contFunciones][2]="0";
+                    matrizDibujo[contFunciones][3]="0";
                     matrizDibujo[contFunciones][4]=metodo; //
                     contFunciones++;
                     break;
