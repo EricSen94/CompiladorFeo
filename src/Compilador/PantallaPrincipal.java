@@ -22,14 +22,12 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     File archivo;
     FileInputStream entrada;
     FileOutputStream salida;
-    Graficador g;
     
     public PantallaPrincipal(Interprete I) {
         initComponents();
         inter = I;
         seleccionar = new JFileChooser();
         archivo = new File("");
-        g = new Graficador();
     }
     public String getContenido(){
         return Texto.getText();
@@ -153,6 +151,11 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                 ejecutationActionPerformed(evt);
             }
         });
+        ejecutation.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                ejecutationKeyPressed(evt);
+            }
+        });
         jMenuBar1.add(ejecutation);
 
         setJMenuBar(jMenuBar1);
@@ -257,6 +260,10 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         inter.getArraySintactico();
         inter.vaciarDatos();
     }//GEN-LAST:event_ejecutationMouseClicked
+
+    private void ejecutationKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_ejecutationKeyPressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ejecutationKeyPressed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JTextArea ErroresL;

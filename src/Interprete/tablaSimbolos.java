@@ -15,9 +15,9 @@ import java.util.Map;
  */
 public class tablaSimbolos {
     public Map<String,String> palabrasReservadas;
+    public Map<String,String> modos;
     public Map<String,String> operadores;
     public Map<String,String> separadores;
-    public Map<String,Integer> lineas;
     public ArrayList<ArrayList<String>> ids;
     public ArrayList<ArrayList<String>> arrayLexico;
     //metodos es para ir comparando las sentencias del Sintanctico (Interprete.sin) que concuerden con los valores de los metodos
@@ -39,7 +39,7 @@ public class tablaSimbolos {
          separadores.put("enter1", "\r");
          separadores.put("enter2", "\n");
          separadores.put("tab", "\t");
-         separadores.put("tab", "/0");
+         separadores.put("endfile", "/0");
          
          //Las palabras reservadas ocupadas en el lenguaje
          palabrasReservadas = new HashMap<>();
@@ -49,12 +49,14 @@ public class tablaSimbolos {
          palabrasReservadas.put("delete", "EliminarCara");
          palabrasReservadas.put("sleep", "Dormir");
          palabrasReservadas.put("change", "CambiarModo");//6
-         palabrasReservadas.put("sad", "triste");
-         palabrasReservadas.put("angry", "enojada");
-         palabrasReservadas.put("happy", "feliz");
-         palabrasReservadas.put("sleepy", "dormida");
-         palabrasReservadas.put("serio", "neutral");
-         palabrasReservadas.put("end", "Fin");
+         
+         modos = new HashMap<>();
+         modos.put("sad", "triste");
+         modos.put("angry", "enojada");
+         modos.put("happy", "feliz");
+         modos.put("sleepy", "dormida");
+         modos.put("serio", "neutral");
+         modos.put("end", "Fin");
                  
          //A falta de suma, resta ... etc, se colcan estos divisores
          operadores = new HashMap<>();
@@ -64,34 +66,34 @@ public class tablaSimbolos {
          
          //Defimos la estructura de cada uno de los metodos
          draw = new ArrayList();
-         draw.add("(");
-         draw.add("num");
+         draw.add("Parentesis Izquierdo");
+         draw.add("number");
          draw.add("Coma");
-         draw.add("num");
+         draw.add("number");
          draw.add("Coma");
-         draw.add("num");
+         draw.add("number");
          draw.add("Coma");
          draw.add("ID");
          draw.add("Coma");
          draw.add("modo");
-         draw.add(")");
+         draw.add("Parentesis Derecho");
          
          delete = new ArrayList();
-         delete.add("(");
+         delete.add("Parentesis Izquierdo");
          delete.add("ID");
-         delete.add(")");
+         delete.add("Parentesis Derecho");
          
          sleep = new ArrayList();
-         sleep.add("(");
-         sleep.add("num");
-         sleep.add(")");
+         sleep.add("Parentesis Izquierdo");
+         sleep.add("number");
+         sleep.add("Parentesis Derecho");
          
          change = new ArrayList();
-         change.add("(");
+         change.add("Parentesis Izquierdo");
          change.add("ID");
          change.add("Coma");
          change.add("modo");
-         change.add(")");
+         change.add("Parentesis Derecho");
          
          //Agregamos a la lista de métodos, los que tenemos, a manera de usarlo como un id en Base de Datos
          metodos = new HashMap<>();
@@ -125,6 +127,11 @@ public class tablaSimbolos {
         //revisar si es palabra reservada
         return palabrasReservadas.values().stream().anyMatch((valor) -> ( valor.equals(token)));
     }
+    //ver si el token es modo
+    public boolean isModo(String token){
+        //revisar si es palabra reservada
+        return modos.values().stream().anyMatch((valor) -> ( valor.equals(token)));
+    }
     //revisar si el token es un identificador
     public boolean isID(String token){
         //revisar si es un ID
@@ -151,7 +158,7 @@ public class tablaSimbolos {
             //Si el valor del token es el mismo al regisro
             if(entrada.getValue().equals(token)){
                 valor = (String)(entrada.getKey());
-                break;
+                return valor;
             }
         }
         return valor;
@@ -160,6 +167,18 @@ public class tablaSimbolos {
     public String cualPrES(String token){
         String valor="";
         for( Map.Entry entrada : palabrasReservadas.entrySet() ){
+            //Si el valor del token es el mismo al regisro
+            if(entrada.getValue().equals(token)){
+                valor = (String)(entrada.getKey());
+                return valor;
+            }
+        }
+        return null;
+    }
+    
+    public String cualModoES(String token){
+        String valor="";
+        for( Map.Entry entrada : modos.entrySet() ){
             //Si el valor del token es el mismo al regisro
             if(entrada.getValue().equals(token)){
                 valor = (String)(entrada.getKey());
@@ -179,7 +198,8 @@ public class tablaSimbolos {
         return false;
     }
     
-    public void vaciarIds(){
-        if(!ids.isEmpty()) ids.clear();
+    public void vaciarDatos(){
+        ids.clear();
+        arrayLexico.clear();
     }
 }
