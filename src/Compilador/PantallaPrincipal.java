@@ -256,9 +256,9 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_ejecutationActionPerformed
 
     private void ejecutationMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ejecutationMouseClicked
+        inter.vaciarDatos();
         inter.lexico(Texto.getText());
         inter.getArraySintactico();
-        inter.vaciarDatos();
     }//GEN-LAST:event_ejecutationMouseClicked
 
     private void ejecutationKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_ejecutationKeyPressed

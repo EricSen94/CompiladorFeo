@@ -132,6 +132,11 @@ public class tablaSimbolos {
         //revisar si es palabra reservada
         return modos.values().stream().anyMatch((valor) -> ( valor.equals(token)));
     }
+    //ver si el token es metodo
+    public boolean isMetodo(String token){
+        //revisar si es palabra reservada
+        return metodos.values().stream().anyMatch((valor) -> ( valor.equals(token)));
+    }
     //revisar si el token es un identificador
     public boolean isID(String token){
         //revisar si es un ID

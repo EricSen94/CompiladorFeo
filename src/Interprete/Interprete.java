@@ -12,6 +12,7 @@ public class Interprete{
     public boolean sePuedeGraf;
     public Graficador graficator;
     private String matrizDibujo[][];
+    private String matrizCol[][];
     private final tablaSimbolos tablaS;
     private final PantallaPrincipal w;
     //Variable que guardará el valor de lo que espera al siguiente, es un array porque puede esperar varias cosas
@@ -21,7 +22,7 @@ public class Interprete{
     private String revisar;
     //un arreglo que mantiene los valores de algun metodo que se esta revisndo
     private final ArrayList<String> revisando;
-    private int contFunciones=0;
+    private int contMetodos=0;
     
     public Interprete(){
         graficator= new Graficador();
@@ -43,6 +44,9 @@ public class Interprete{
         w.ErroresSin.setText("");
         esperoEsto.clear();
         tablaS.ids.clear();
+        revisar="";
+        revisarPos=1;
+        sePuedeGraf=false;
         //Si el contenido no esta vacio
         if(!contenido.isEmpty()){
             String[] lineas;
@@ -178,11 +182,23 @@ public class Interprete{
         }
         else JOptionPane.showMessageDialog(null,"No has escrito nada");
     }
+    public int getCantidadMetodos(){
+        int i,tamArray,k=0;
+        tamArray = tablaS.arrayLexico.size();
+        ArrayList<String> temp;
+        for(i=0; i<tamArray; i++){
+            temp=tablaS.arrayLexico.get(i);
+            if(tablaS.isMetodo(temp.get(i))){
+                k++;
+            }
+        }
+        return k;
+    }
     //Token de la PR, valor del ID o valor del Numero
     public void sintactico(ArrayList<ArrayList<String>> arraySin){
         int i,j, tamArrayTokenActual,linea, col;
         int cantTokens = arraySin.size();
-        matrizDibujo= new String[cantTokens][5];
+        matrizDibujo= new String[getCantidadMetodos()][5];
         System.out.println("Tokens leidos: "+cantTokens);
         String token, valorToken;
         //Revisar almacena el metodo que se está revisando
@@ -349,61 +365,58 @@ public class Interprete{
     public void semantico(String metodo, String cara, int x, int y, int tam, int fila, int col){
             switch(metodo){
                 case "draw":
-                    matrizDibujo[contFunciones][0]=String.valueOf(x);//x1 //nombre de la cara o si es borrar o algo asi
-                    matrizDibujo[contFunciones][1]=String.valueOf(y);//y1
-                    matrizDibujo[contFunciones][2]=String.valueOf(tam);
-                    matrizDibujo[contFunciones][3]=cara;
-                    matrizDibujo[contFunciones][4]=metodo;
-                    contFunciones++;
+                    matrizDibujo[contMetodos][0]=String.valueOf(x);//x1 //nombre de la cara o si es borrar o algo asi
+                    matrizDibujo[contMetodos][1]=String.valueOf(y);//y1
+                    matrizDibujo[contMetodos][2]=String.valueOf(tam);
+                    matrizDibujo[contMetodos][3]=cara;
+                    matrizDibujo[contMetodos][4]=metodo;
+                    contMetodos++;
                     break;
                 case "delete":
-                    matrizDibujo[contFunciones][0]=String.valueOf(x);//id
-                    matrizDibujo[contFunciones][1]="0";
-                    matrizDibujo[contFunciones][2]="0";
-                    matrizDibujo[contFunciones][3]="0";
-                    matrizDibujo[contFunciones][4]=metodo; //
-                    contFunciones++;
+                    matrizDibujo[contMetodos][0]=String.valueOf(x);//id
+                    matrizDibujo[contMetodos][1]="0";
+                    matrizDibujo[contMetodos][2]="0";
+                    matrizDibujo[contMetodos][3]="0";
+                    matrizDibujo[contMetodos][4]=metodo; //
+                    contMetodos++;
                     break;
                 case "sleep":
-                    matrizDibujo[contFunciones][0]=String.valueOf(x);//id
-                    matrizDibujo[contFunciones][1]="0";
-                    matrizDibujo[contFunciones][2]="0";
-                    matrizDibujo[contFunciones][3]="0";
-                    matrizDibujo[contFunciones][4]=metodo; //
-                    contFunciones++;
+                    matrizDibujo[contMetodos][0]=String.valueOf(x);//id
+                    matrizDibujo[contMetodos][1]="0";
+                    matrizDibujo[contMetodos][2]="0";
+                    matrizDibujo[contMetodos][3]="0";
+                    matrizDibujo[contMetodos][4]=metodo; //
+                    contMetodos++;
                     break;
                 case "change":
                     String[] caras = cara.split(",");
-                    matrizDibujo[contFunciones][0]=caras[1];//nuevo estado
-                    matrizDibujo[contFunciones][1]=caras[0];//Cara original
-                    matrizDibujo[contFunciones][2]="0";
-                    matrizDibujo[contFunciones][3]="0";
-                    matrizDibujo[contFunciones][4]=metodo; //
-                    contFunciones++;
+                    matrizDibujo[contMetodos][0]=caras[1];//nuevo estado
+                    matrizDibujo[contMetodos][1]=caras[0];//Cara original
+                    matrizDibujo[contMetodos][2]="0";
+                    matrizDibujo[contMetodos][3]="0";
+                    matrizDibujo[contMetodos][4]=metodo; //
+                    contMetodos++;
                     break;
                     //CUANDO vaya a graficar
                 case "graficar":
-                    if( revisarColicion() ){
-                        w.Lienzo.add(graficator);
-                        graficator.repaint();
-                        System.out.println("Entro a graficar");
-                        //Lo volvemos a inicializar
-                        sePuedeGraf=false;
+                    /*String res= graficator.checador(matrizDibujo);
+                    if("NP".equals(res)){
+                        System.out.println("Se puede graficar!");
+                        graficator.addMatriz(matrizDibujo);
                     }
                     else{
-                        mandarErrorMensajeSemantico("Error por colicion", fila, col);
+                        mandarErrorMensajeSemantico("Error por colicion en"+res, fila, col);
                     }
+                    */
+                    graficator.addMatriz(matrizDibujo);
+                    w.Lienzo.add(graficator);
+                    graficator.repaint();
+                    System.out.println("Entro a graficar");
                     break;
             }
             
     }
-    public boolean revisarColicion(){
-        if("NP".equals(graficator.checador(matrizDibujo))){
-            System.out.println("Se puede graficar!");
-            graficator.addMatriz(matrizDibujo);
-            return true;
-        }
-        return false;
+    public void revisarColicion(){
     }
     public void vaciarDatos(){
         tablaS.vaciarDatos();
