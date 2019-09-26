@@ -23,21 +23,9 @@ public class Graficador extends JPanel {
         this.setBounds(0,0,250,500);
     }
     public void addMatriz(String matrizD[][]){
-        if(matrizDibujo==null){
-            matrizDibujo=matrizD;
-        }
-        else{
-            int tamanio=matrizDibujo.length;
-            String temp[][];
-            temp=matrizDibujo;
-            int i;
-            //Agregamos los nuevos valores a la matriz
-            for(i=tamanio+1; i<=matrizD.length; i++){
-                temp[i][0]=matrizDibujo[i][0];
-            }
-            this.matrizDibujo=temp;
-        }
+        matrizDibujo=matrizD;
     }
+    
     public String checador(String matriz2D[][]){
         String bandera="NP";
         this.matrizDibujo=matriz2D;
@@ -61,7 +49,10 @@ public class Graficador extends JPanel {
                    && matrizColiciones[i+1][4]<=matrizColiciones[i][0] && matrizColiciones[i+1][0] >= matrizColiciones[i][0] 
                    && matrizColiciones[i+1][1]>=matrizColiciones[i][1]&&matrizColiciones[i+1][3]>=matrizColiciones[i][1]
                    && matrizColiciones[i+1][7]<=matrizColiciones[i][1]&&matrizColiciones[i+1][7]>=matrizColiciones[i][1]){
-                    bandera="colicion";
+                    int x,y;
+                    x=matrizColiciones[i][0];
+                    y=matrizColiciones[i][1];
+                    bandera = "x="+String.valueOf(x)+",y="+String.valueOf(y);
                     break;
                 }
             }
@@ -193,10 +184,6 @@ public class Graficador extends JPanel {
             
             i++;
         }
-        
-        
-        
-        
         }
     }
     @Override

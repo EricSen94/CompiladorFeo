@@ -49,6 +49,7 @@ public class tablaSimbolos {
          palabrasReservadas.put("delete", "EliminarCara");
          palabrasReservadas.put("sleep", "Dormir");
          palabrasReservadas.put("change", "CambiarModo");//6
+         palabrasReservadas.put("end", "Fin");
          
          modos = new HashMap<>();
          modos.put("sad", "triste");
@@ -56,7 +57,6 @@ public class tablaSimbolos {
          modos.put("happy", "feliz");
          modos.put("sleepy", "dormida");
          modos.put("serio", "neutral");
-         modos.put("end", "Fin");
                  
          //A falta de suma, resta ... etc, se colcan estos divisores
          operadores = new HashMap<>();
@@ -131,6 +131,11 @@ public class tablaSimbolos {
     public boolean isModo(String token){
         //revisar si es palabra reservada
         return modos.values().stream().anyMatch((valor) -> ( valor.equals(token)));
+    }
+    //ver si el token es metodo
+    public boolean isMetodo(String token){
+        //revisar si es palabra reservada
+        return metodos.values().stream().anyMatch((valor) -> ( valor.equals(token)));
     }
     //revisar si el token es un identificador
     public boolean isID(String token){

@@ -12,6 +12,7 @@ public class Interprete{
     public boolean sePuedeGraf;
     public Graficador graficator;
     private String matrizDibujo[][];
+    private String matrizCol[][];
     private final tablaSimbolos tablaS;
     private final PantallaPrincipal w;
     //Variable que guardará el valor de lo que espera al siguiente, es un array porque puede esperar varias cosas
@@ -21,6 +22,7 @@ public class Interprete{
     private String revisar;
     //un arreglo que mantiene los valores de algun metodo que se esta revisndo
     private final ArrayList<String> revisando;
+    private int contMetodos=0;
     
     public Interprete(){
         graficator= new Graficador();
@@ -42,6 +44,9 @@ public class Interprete{
         w.ErroresSin.setText("");
         esperoEsto.clear();
         tablaS.ids.clear();
+        revisar="";
+        revisarPos=1;
+        sePuedeGraf=false;
         //Si el contenido no esta vacio
         if(!contenido.isEmpty()){
             String[] lineas;
@@ -177,10 +182,23 @@ public class Interprete{
         }
         else JOptionPane.showMessageDialog(null,"No has escrito nada");
     }
+    public int getCantidadMetodos(){
+        int i,tamArray,k=0;
+        tamArray = tablaS.arrayLexico.size();
+        ArrayList<String> temp;
+        for(i=0; i<tamArray; i++){
+            temp=tablaS.arrayLexico.get(i);
+            if(tablaS.isMetodo(temp.get(i))){
+                k++;
+            }
+        }
+        return k;
+    }
     //Token de la PR, valor del ID o valor del Numero
     public void sintactico(ArrayList<ArrayList<String>> arraySin){
         int i,j, tamArrayTokenActual,linea, col;
         int cantTokens = arraySin.size();
+        matrizDibujo= new String[getCantidadMetodos()][5];
         System.out.println("Tokens leidos: "+cantTokens);
         String token, valorToken;
         //Revisar almacena el metodo que se está revisando
@@ -237,6 +255,7 @@ public class Interprete{
                         for(j=0; j<esperoEsto.size(); j++){
                             if(token.equals(esperoEsto.get(j))){
                                 revisar=token;
+                                break;
                             }
                         }
                         //Despues de revisar si coincidio con algo esperado 
@@ -261,6 +280,12 @@ public class Interprete{
     public void revisarOrden(String valor, String queEs, int pos, int fila, int col){
         System.out.println("Revisando orden...");
         int i;
+        if(queEs.equals("end")) {
+            revisando.clear();
+            revisarPos=1;
+            sePuedeGraf=true;
+            revisar="";
+        }
         //Revisamos si el token es el nombre del metodo a revisar (osea es un metodo)
         if( tablaS.metodos.containsKey(valor) && revisando.isEmpty() ){
             //Guardamos el array de la estructura de ese metodo
@@ -277,66 +302,61 @@ public class Interprete{
             }
         }
         //sino es que ya estamos revisando una parte avanzada
-        else{
-            if(valor.equals("end")) {
-                revisando.clear();
-                revisarPos=1;
-                sePuedeGraf=true;
-                revisar="";
+        else if(!revisando.isEmpty()){
+            //Revisamos si nuestro valor actual coincide con nuestra estructura
+            if(revisando.get(revisarPos).equals(queEs)){
+                //////////////////////////////////////////////////////////////
+                //Importante
+                //Pasar al valor ya revisado actual de nuestro método al arreglo de revisado
+                //Se podria ocupar otro arreglo, pero seria exactamente igual
+                revisando.set(revisarPos, valor);
+                revisarPos++;
             }
             else{
-                //Revisamos si nuestro valor actual coincide con nuestra estructura
-                if(revisando.get(revisarPos).equals(queEs)){
-                    //////////////////////////////////////////////////////////////
-                    //Importante
-                    //Pasar al valor ya revisado actual de nuestro método al arreglo de revisado
-                    //Se podria ocupar otro arreglo, pero seria exactamente igual
-                    revisando.set(revisarPos, valor);
-                    revisarPos++;
-                }
-                else{
-                    mandarErrorSintactico("Se esperaba un valor "+revisando.get(revisarPos)+".",fila, col);
-                }
-                //Si ya se revisó todo, vaciar para revisar otra cosa
-                if(revisarPos==revisando.size()){
-                    revisarPos=1;
-                    revisar="";
-                    //La estrucutra cuenta los parentesis y comas.
-                    //revisando.get(0) es el nombre del método
-                    String nombre = revisando.get(0);
-                    //Si es un draw
-                    if(revisando.get(0).equals("draw")){
-                        String IdCara = revisando.get(8);
-                        int x =Integer.parseInt(revisando.get(2));
-                        int y=Integer.parseInt(revisando.get(4));
-                        int tam = Integer.parseInt(revisando.get(6));
-                        semantico(nombre, IdCara,x,y , tam, fila,col );
-                    }
-                    //Si es delete
-                    if(revisando.get(0).equals("delete")){
-                        String Idcara= revisando.get(2);
-                        semantico(nombre, Idcara,0,0, 0, fila, col);
-                    }
-                    //Si es sleep
-                    if(revisando.get(0).equals("sleep")){
-                        String IdCara= revisando.get(2);
-                        semantico(nombre, IdCara, 0, 0, 0, fila, col);
-                    }
-                    //Si es change
-                    if(revisando.get(0).equals("change")){
-                        //como el metodo semantico no cuenta con 3 String de parámetros, le agregamos al parámetro de cara las 2
-                        //Primero la cara original, y luego la nueva
-                        //Separado por una coma
-                        String caras = revisando.get(2)+","+revisando.get(4);
-                        semantico(nombre, caras, 0, 0, 0, fila,col);
-                    }
-                    revisando.clear();
-                }
+                mandarErrorSintactico("Se esperaba un valor "+revisando.get(revisarPos)+".",fila, col);
             }
+            //Si ya se revisó todo, vaciar para revisar otra cosa
+            if(revisarPos>=revisando.size()){
+                revisarPos=1;
+                revisar="";
+                //La estrucutra cuenta los parentesis y comas.
+                //revisando.get(0) es el nombre del método
+                String nombre = revisando.get(0);
+                //Si es un draw
+                if(revisando.get(0).equals("draw")){
+                    String IdCara = revisando.get(8);
+                    int x =Integer.parseInt(revisando.get(2));
+                    int y=Integer.parseInt(revisando.get(4));
+                    int tam = Integer.parseInt(revisando.get(6));
+                    semantico(nombre, IdCara,x,y , tam, fila,col );
+                }
+                //Si es delete
+                if(revisando.get(0).equals("delete")){
+                    String Idcara= revisando.get(2);
+                    semantico(nombre, Idcara,0,0, 0, fila, col);
+                }
+                //Si es sleep
+                if(revisando.get(0).equals("sleep")){
+                    String IdCara= revisando.get(2);
+                    semantico(nombre, IdCara, 0, 0, 0, fila, col);
+                }
+                //Si es change
+                if(revisando.get(0).equals("change")){
+                    //como el metodo semantico no cuenta con 3 String de parámetros, le agregamos al parámetro de cara las 2
+                    //Primero la cara original, y luego la nueva
+                    //Separado por una coma
+                    String caras = revisando.get(2)+","+revisando.get(4);
+                    semantico(nombre, caras, 0, 0, 0, fila,col);
+                }
+                revisando.clear();
+            }
+        }
+        else{
             if(sePuedeGraf){
-                semantico("", "", 0, 0, 0, fila, col);
+                String v1="graficar",v2="";
+                semantico(v1, v2, 0, 0, 0, fila, col);
             }
-            if(revisando.isEmpty()){
+            if(!valor.equals("end")){
                 //Token inesperado
                 mandarErrorSintactico("Token inesperado depués del END.",fila, col);
             }
@@ -345,57 +365,58 @@ public class Interprete{
     public void semantico(String metodo, String cara, int x, int y, int tam, int fila, int col){
             switch(metodo){
                 case "draw":
-                    matrizDibujo[0][0]=String.valueOf(x);//x1 //nombre de la cara o si es borrar o algo asi
-                    matrizDibujo[0][1]=String.valueOf(y);//y1
-                    matrizDibujo[0][2]=Integer.toString(tam);
-                    matrizDibujo[0][3]=cara;
-                    matrizDibujo[0][4]=metodo;
+                    matrizDibujo[contMetodos][0]=String.valueOf(x);//x1 //nombre de la cara o si es borrar o algo asi
+                    matrizDibujo[contMetodos][1]=String.valueOf(y);//y1
+                    matrizDibujo[contMetodos][2]=String.valueOf(tam);
+                    matrizDibujo[contMetodos][3]=cara;
+                    matrizDibujo[contMetodos][4]=metodo;
+                    contMetodos++;
                     break;
                 case "delete":
-                    matrizDibujo[0][0]=String.valueOf(x);//id
-                    matrizDibujo[0][1]="";
-                    matrizDibujo[0][2]="";
-                    matrizDibujo[0][3]="";
-                    matrizDibujo[0][4]=metodo; //
+                    matrizDibujo[contMetodos][0]=String.valueOf(x);//id
+                    matrizDibujo[contMetodos][1]="0";
+                    matrizDibujo[contMetodos][2]="0";
+                    matrizDibujo[contMetodos][3]="0";
+                    matrizDibujo[contMetodos][4]=metodo; //
+                    contMetodos++;
                     break;
                 case "sleep":
-                    matrizDibujo[0][0]=String.valueOf(x);//id
-                    matrizDibujo[0][1]="";
-                    matrizDibujo[0][2]="";
-                    matrizDibujo[0][3]="";
-                    matrizDibujo[0][4]=metodo; //
+                    matrizDibujo[contMetodos][0]=String.valueOf(x);//id
+                    matrizDibujo[contMetodos][1]="0";
+                    matrizDibujo[contMetodos][2]="0";
+                    matrizDibujo[contMetodos][3]="0";
+                    matrizDibujo[contMetodos][4]=metodo; //
+                    contMetodos++;
                     break;
                 case "change":
                     String[] caras = cara.split(",");
-                    matrizDibujo[0][0]=caras[1];//nueva cara
-                    matrizDibujo[0][1]=caras[0];//Cara original
-                    matrizDibujo[0][2]="";
-                    matrizDibujo[0][3]="";
-                    matrizDibujo[0][4]=metodo; //
+                    matrizDibujo[contMetodos][0]=caras[1];//nuevo estado
+                    matrizDibujo[contMetodos][1]=caras[0];//Cara original
+                    matrizDibujo[contMetodos][2]="0";
+                    matrizDibujo[contMetodos][3]="0";
+                    matrizDibujo[contMetodos][4]=metodo; //
+                    contMetodos++;
                     break;
                     //CUANDO vaya a graficar
-                default:
-                    w.Lienzo.add(graficator);
-                    if( revisarColicion() ){
-                        graficator.repaint();
-                        System.out.println("Entro a graficar");
-                        //Lo volvemos a inicializar
-                        sePuedeGraf=false;
+                case "graficar":
+                    /*String res= graficator.checador(matrizDibujo);
+                    if("NP".equals(res)){
+                        System.out.println("Se puede graficar!");
+                        graficator.addMatriz(matrizDibujo);
                     }
                     else{
-                        mandarErrorMensajeSemantico("Error por colicion", fila, col);
+                        mandarErrorMensajeSemantico("Error por colicion en"+res, fila, col);
                     }
+                    */
+                    graficator.addMatriz(matrizDibujo);
+                    w.Lienzo.add(graficator);
+                    graficator.repaint();
+                    System.out.println("Entro a graficar");
                     break;
             }
             
     }
-    public boolean revisarColicion(){
-        if("NP".equals(graficator.checador(matrizDibujo))){
-            System.out.println("Se puede graficar!");
-            graficator.addMatriz(matrizDibujo);
-            return true;
-        }
-        return false;
+    public void revisarColicion(){
     }
     public void vaciarDatos(){
         tablaS.vaciarDatos();
