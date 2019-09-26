@@ -53,7 +53,7 @@ public class Interprete{
             //cont = columna  i = fila
             int i, cantLineas,cont=0;
             cantLineas = lineas.length;
-            ArrayList<String> nuevo;
+            ArrayList<String> nuevo, nuevo2;
             String lineaActual;
             System.out.println("Analizando Léxico");
             //Nos movemos a lo largo de todo el docu-mento
@@ -91,6 +91,21 @@ public class Interprete{
                                     tablaS.arrayLexico.add(nuevo);
                                     temp="";
                                 }
+                                else if (tablaS.isModo(temp)){
+                                    pr = tablaS.cualModoES(temp);
+                                    //System.out.println("Linea "+(i+1)+", Palabra reservada: "+pr+"\n");
+                                    //Lo mandamos al arreglo
+                                    //****************************
+                                    //PR
+                                    //****************************
+                                    //Token del PR, valor, linea, columa
+                                    nuevo.add("modo");
+                                    nuevo.add(pr);
+                                    nuevo.add(Integer.toString(i));
+                                    nuevo.add(Integer.toString(cont));
+                                    tablaS.arrayLexico.add(nuevo);
+                                    temp="";
+                                }
                                 else{
                                     //Sino era palabra reservada, entonces era ID
                                     //System.out.println("Linea "+(i+1)+", ID: "+temp+"\n");
@@ -119,6 +134,7 @@ public class Interprete{
                                 nuevo.add(Integer.toString(cont));
                                 tablaS.arrayLexico.add(nuevo);
                                 temp="";
+                                
                             }
                             //Entonces la palabra anterior es una combinacion de letras y numeros (un ID)
                             else if( caracter.matches(".*[a-zA-Z0-9].*") ){
@@ -135,19 +151,20 @@ public class Interprete{
                                     temp="";
                             }
                             //Ya que revisamos si antes habia algo, pasamos el operador actual al arreglo
-                            else if (tablaS.operadores.containsValue(caracter)) {
+                            if (!tablaS.esSeparador(caracter)) {
+                                nuevo2 = new ArrayList<>();
                                 ope = tablaS.queOpeEs(caracter);
                                 //System.out.println("Linea "+(i+1)+", operador: "+ope+"\n");
                                 //****************************
                                 //Operador
                                 //****************************
                                 //Token de operador, valor del operador, linea, columa
-                                nuevo.add(caracter);
-                                nuevo.add(ope);
-                                nuevo.add(Integer.toString(i));
-                                nuevo.add(Integer.toString(cont));
-                                tablaS.arrayLexico.add(nuevo);
-                                }
+                                nuevo2.add(ope);
+                                nuevo2.add(caracter);
+                                nuevo2.add(Integer.toString(i));
+                                nuevo2.add(Integer.toString(cont));
+                                tablaS.arrayLexico.add(nuevo2);
+                            }
                         }
                         else mandarErrorLexico(i, cont);
                     cont++;
@@ -170,7 +187,7 @@ public class Interprete{
         System.out.println("Analizando Sintactico");
         esperoEsto.add("pro");
         for(i=0; i<cantTokens; i++){
-            //El primer valor del arreglo asociado en la posicion i
+            //El token primer valor del arreglo asociado en la posicion i
             token = arraySin.get(i).get(0);
             //Valores a ocupar
             if(!revisando.isEmpty()) System.out.println("Revisando el "+revisando.get(0)+", espera: "+revisando.get(revisarPos));
@@ -275,7 +292,7 @@ public class Interprete{
                     //Pasar al valor ya revisado actual de nuestro método al arreglo de revisado
                     //Se podria ocupar otro arreglo, pero seria exactamente igual
                     revisando.set(revisarPos, valor);
-                    revisarPos+=1;
+                    revisarPos++;
                 }
                 else{
                     mandarErrorSintactico("Se esperaba un valor "+revisando.get(revisarPos)+".",fila, col);
@@ -291,7 +308,7 @@ public class Interprete{
                     if(revisando.get(0).equals("draw")){
                         String IdCara = revisando.get(8);
                         int x =Integer.parseInt(revisando.get(2));
-                        int y=Integer.parseInt(revisando.get(3));
+                        int y=Integer.parseInt(revisando.get(4));
                         int tam = Integer.parseInt(revisando.get(6));
                         semantico(nombre, IdCara,x,y , tam, fila,col );
                     }
@@ -381,7 +398,7 @@ public class Interprete{
         return false;
     }
     public void vaciarDatos(){
-        tablaS.vaciarIds();
+        tablaS.vaciarDatos();
     }
     public void mandarMensajeLexico(String mensaje){
         w.ErroresL.append(mensaje);

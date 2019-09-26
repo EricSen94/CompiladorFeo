@@ -22,14 +22,12 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     File archivo;
     FileInputStream entrada;
     FileOutputStream salida;
-    Graficador g;
     
     public PantallaPrincipal(Interprete I) {
         initComponents();
         inter = I;
         seleccionar = new JFileChooser();
         archivo = new File("");
-        g = new Graficador();
     }
     public String getContenido(){
         return Texto.getText();
