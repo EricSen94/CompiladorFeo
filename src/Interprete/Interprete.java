@@ -24,18 +24,14 @@ public class Interprete{
     private final ArrayList<String> revisando;
     private int contMetodos=0;
     
-    public Interprete(){
+    public Interprete(PantallaPrincipal w){
         graficator= new Graficador();
         tablaS = new tablaSimbolos();
         esperoEsto = new ArrayList();
         revisando = new ArrayList();
         sePuedeGraf=false;
         revisar="";
-        w = new PantallaPrincipal(this);
-        w.setBounds(0,0,800,600);
-        w.setTitle("Intérprete");
-        w.setLocationRelativeTo(null);
-        w.setVisible(true);
+        this.w = w;
     }
     public void lexico(String contenido){
         //Vaciamos los valores porque en cada ejecucion de la compilación se ocupan estos valores
@@ -188,7 +184,7 @@ public class Interprete{
         ArrayList<String> temp;
         for(i=0; i<tamArray; i++){
             temp=tablaS.arrayLexico.get(i);
-            if(tablaS.isMetodo(temp.get(i))){
+            if(tablaS.isMetodo(temp.get(0))){
                 k++;
             }
         }
@@ -325,6 +321,8 @@ public class Interprete{
                 //Si es un draw
                 if(revisando.get(0).equals("draw")){
                     String IdCara = revisando.get(8);
+                    String estado = revisando.get(10);
+                    nombre+=","+estado;
                     int x =Integer.parseInt(revisando.get(2));
                     int y=Integer.parseInt(revisando.get(4));
                     int tam = Integer.parseInt(revisando.get(6));
@@ -337,8 +335,8 @@ public class Interprete{
                 }
                 //Si es sleep
                 if(revisando.get(0).equals("sleep")){
-                    String IdCara= revisando.get(2);
-                    semantico(nombre, IdCara, 0, 0, 0, fila, col);
+                    String tiempo= revisando.get(2);
+                    semantico(nombre, "", Integer.parseInt(tiempo), 0, 0, fila, col);
                 }
                 //Si es change
                 if(revisando.get(0).equals("change")){
@@ -363,17 +361,23 @@ public class Interprete{
         }
     }
     public void semantico(String metodo, String cara, int x, int y, int tam, int fila, int col){
+        String estado="";
+        if(metodo.contains(",")){
+            String []vals = metodo.split(",");
+            metodo=vals[0];
+            estado=vals[1];
+        }
             switch(metodo){
                 case "draw":
                     matrizDibujo[contMetodos][0]=String.valueOf(x);//x1 //nombre de la cara o si es borrar o algo asi
                     matrizDibujo[contMetodos][1]=String.valueOf(y);//y1
                     matrizDibujo[contMetodos][2]=String.valueOf(tam);
                     matrizDibujo[contMetodos][3]=cara;
-                    matrizDibujo[contMetodos][4]=metodo;
+                    matrizDibujo[contMetodos][4]=estado;
                     contMetodos++;
                     break;
                 case "delete":
-                    matrizDibujo[contMetodos][0]=String.valueOf(x);//id
+                    matrizDibujo[contMetodos][0]=cara;//id
                     matrizDibujo[contMetodos][1]="0";
                     matrizDibujo[contMetodos][2]="0";
                     matrizDibujo[contMetodos][3]="0";
@@ -390,8 +394,8 @@ public class Interprete{
                     break;
                 case "change":
                     String[] caras = cara.split(",");
-                    matrizDibujo[contMetodos][0]=caras[1];//nuevo estado
-                    matrizDibujo[contMetodos][1]=caras[0];//Cara original
+                    matrizDibujo[contMetodos][0]=caras[0];//Cara original
+                    matrizDibujo[contMetodos][1]=caras[1];//nuevo estado
                     matrizDibujo[contMetodos][2]="0";
                     matrizDibujo[contMetodos][3]="0";
                     matrizDibujo[contMetodos][4]=metodo; //
@@ -399,19 +403,17 @@ public class Interprete{
                     break;
                     //CUANDO vaya a graficar
                 case "graficar":
-                    /*String res= graficator.checador(matrizDibujo);
+                    String res= graficator.checador(matrizDibujo);
                     if("NP".equals(res)){
                         System.out.println("Se puede graficar!");
+                        //Le añado la matiz
                         graficator.addMatriz(matrizDibujo);
+                        //Le paso a pantallaprincipal el graficador
+                        w.setGraficador(graficator);
                     }
                     else{
-                        mandarErrorMensajeSemantico("Error por colicion en"+res, fila, col);
+                        mandarErrorMensajeSemantico("Error por colicion en "+res, fila, col);
                     }
-                    */
-                    graficator.addMatriz(matrizDibujo);
-                    w.Lienzo.add(graficator);
-                    graficator.repaint();
-                    System.out.println("Entro a graficar");
                     break;
             }
             
@@ -443,11 +445,8 @@ public class Interprete{
     public void mandarErrorMensajeSemantico(String mensaje, int fila, int col){
         w.ErroresSem.append("[Error]: "+mensaje+"Linea: "+fila+", Columna: "+col+"\n");
     }
-    public void getArraySintactico(){
-        System.out.println("Tabla de ID´s");
-        for(int i=0; i<tablaS.ids.size(); i++){
-            System.out.println(i+" "+tablaS.ids.get(i)+"\n");
-        }
+    public String[][]getArraySemantico(){
+        return matrizDibujo;
     }
     
 }

@@ -22,15 +22,19 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     File archivo;
     FileInputStream entrada;
     FileOutputStream salida;
+    Graficador graficator;
     
-    public PantallaPrincipal(Interprete I) {
+    public PantallaPrincipal() {
         initComponents();
-        inter = I;
         seleccionar = new JFileChooser();
         archivo = new File("");
+        graficator = null;
     }
     public String getContenido(){
         return Texto.getText();
+    }
+    public void setGraficador(Graficador g){
+        graficator = g;
     }
     public String AbrirArchivo(File Archivo){
         String documento="";
@@ -255,10 +259,18 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     
     }//GEN-LAST:event_ejecutationActionPerformed
 
+    public void setInter(Interprete inter) {
+        this.inter = inter;
+    }
+    
     private void ejecutationMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ejecutationMouseClicked
+        inter = new Interprete(this);
         inter.vaciarDatos();
         inter.lexico(Texto.getText());
-        inter.getArraySintactico();
+        if(graficator!=null){
+            Lienzo.add(graficator);
+            graficator.repaint();
+        }
     }//GEN-LAST:event_ejecutationMouseClicked
 
     private void ejecutationKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_ejecutationKeyPressed
