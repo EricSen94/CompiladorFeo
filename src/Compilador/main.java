@@ -4,7 +4,6 @@
  * and open the template in the editor.
  */
 package Compilador;
-import Interprete.Interprete;
 
 /**
  *
@@ -12,6 +11,10 @@ import Interprete.Interprete;
  */
 public class main {
     public static void main(String[] args) {
-        Interprete w = new Interprete();
+        PantallaPrincipal w = new PantallaPrincipal();
+        w.setBounds(0,0,800,600);
+        w.setTitle("Intérprete");
+        w.setLocationRelativeTo(null);
+        w.setVisible(true);
     }
 }

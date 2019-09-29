@@ -32,7 +32,8 @@ public class Graficador extends JPanel {
         int tamaño = matrizDibujo.length;
         
         int matrizColiciones[][] =  new int[tamaño][8];
-        for(int h=0;h<=tamaño;h++){
+        for(int h=0;h<tamaño;h++){
+            try {
                 matrizColiciones[h][0]=Integer.parseInt(matrizDibujo[h][0]);//x1
                 matrizColiciones[h][1]=Integer.parseInt(matrizDibujo[h][1]);//y1
                 matrizColiciones[h][2]=Integer.parseInt(matrizDibujo[h][0])+Integer.parseInt(matrizDibujo[h][2]);
@@ -41,9 +42,13 @@ public class Graficador extends JPanel {
                 matrizColiciones[h][5]=Integer.parseInt(matrizDibujo[h][1]+Integer.parseInt(matrizDibujo[h][2]));
                 matrizColiciones[h][6]=Integer.parseInt(matrizDibujo[h][0]);
                 matrizColiciones[h][7]=Integer.parseInt(matrizDibujo[h][1])+Integer.parseInt(matrizDibujo[h][2]);    
+            } catch (NumberFormatException e){
+                System.out.println("Intentando paarsear una palabra a Integer.");
+            }
+                
         }
         for(int i=0;i<=tamaño;i++){
-            if(i==tamaño) break;
+            if(i==tamaño-1) break;
             else{
                 if(matrizColiciones[i+1][0]>=matrizColiciones[i][0]&&matrizColiciones[i+1][2]>=matrizColiciones[i][0] 
                    && matrizColiciones[i+1][4]<=matrizColiciones[i][0] && matrizColiciones[i+1][0] >= matrizColiciones[i][0] 
@@ -52,7 +57,8 @@ public class Graficador extends JPanel {
                     int x,y;
                     x=matrizColiciones[i][0];
                     y=matrizColiciones[i][1];
-                    bandera = "x="+String.valueOf(x)+",y="+String.valueOf(y);
+                    //bandera= "cara '"+matrizDibujo[i][3]+"' y cara '"+matrizDibujo[i+1][3]+". ";
+                    bandera = "x= "+String.valueOf(x)+", y= "+String.valueOf(y)+". ";
                     break;
                 }
             }
@@ -67,18 +73,18 @@ public class Graficador extends JPanel {
         int aux2;
         int aux3;
         int tamaño = matrizDibujo.length;
-        while(true){
+        int i=0;
+        while(i<=tamaño){
                 try{
                      sleep(1);
                 }
                  catch (InterruptedException ex) {
                      Logger.getLogger(Graficador.class.getName()).log(Level.SEVERE, null, ex);
                  }
-        int i=0;
         
         while(matrizDibujo[i][0]!=null){
             //duerme como se indique, lo toma de la pos 4, espera los segundos guardados en la pos 0
-             if(matrizDibujo[i][4]=="sleep"){
+             if("sleep".equals(matrizDibujo[i][4])){
                  try{
                      sleep(Integer.parseInt(matrizDibujo[i][0]));}
                  catch (InterruptedException ex) {
@@ -86,7 +92,7 @@ public class Graficador extends JPanel {
                  }
             }
              //revisa si no se debe borrar una cara, revisa la poscicion 4 y reccorre eliminando, en la pos 0 esta el nombre de la cara a borrar
-             if(matrizDibujo[i][4]=="delete"){
+             if("delete".equals(matrizDibujo[i][4])){
                  for(int h=0;h<tamaño;h++){
                      //Buscamos en toda la matriz algun valor de dibujar cara en la posicion 3
                      if(matrizDibujo[h][3]==matrizDibujo[i][0]){
@@ -100,22 +106,22 @@ public class Graficador extends JPanel {
                             aux4++;
                          }
                          matrizDibujo[aux4]=null;
+                        //Para no hacer las siguientes comparaciones de if
+                        break;
                      }
                  }
-                 if(matrizDibujo[i][4]=="change"){
-                     //Buscamos en toda la matriz el valor que vamos a cambiar
-                     for(int h=0;h<i;h++){
-                         //Buscamos las caras en los métodos de draw en donde coincida la cara
-                         if(matrizDibujo[h][3]==matrizDibujo[i][1] && h!=i){
-                             matrizDibujo[h][3]=matrizDibujo[i][0];
-                         }
+             }
+             if("change".equals(matrizDibujo[i][4])){
+                 //Buscamos en toda la matriz el valor que vamos a cambiar
+                 for(int h=0;h<i;h++){
+                     //Buscamos las caras en los métodos de draw en donde coincida la cara
+                     if(matrizDibujo[h][3].equals(matrizDibujo[i][1]) && h!=i){
+                         matrizDibujo[h][3]=matrizDibujo[i][0];
                      }
                  }
-             //Para no hacer las siguientes comparaciones de if
-             break;
              }
              //En caso que sea draw
-            if(matrizDibujo[i][4]=="feliz"){
+            if("happy".equals(matrizDibujo[i][4])){
                
                 g.setColor(Color.YELLOW);
                 aux1 = Integer.parseInt(matrizDibujo[i][0]);
@@ -128,7 +134,7 @@ public class Graficador extends JPanel {
                 g.fillOval(aux1+aux3/2,aux2+aux3/2 ,aux3/4 ,aux3/4);
                 g.fillOval(aux1+(aux3+aux3/4),aux2+aux3/2 ,aux3/4 ,aux3/4);
             }
-            if(matrizDibujo[i][4]=="triste"){
+            if("sad".equals(matrizDibujo[i][4])){
                
                 g.setColor(Color.YELLOW);
                 aux1 = Integer.parseInt(matrizDibujo[i][0]);
@@ -141,7 +147,7 @@ public class Graficador extends JPanel {
                 g.fillOval(aux1+aux3/2,aux2+aux3/2 ,aux3/4 ,aux3/4);
                 g.fillOval(aux1+(aux3+aux3/4),aux2+aux3/2 ,aux3/4 ,aux3/4);
             }
-            if(matrizDibujo[i][4]=="dormida"){
+            if("slepy".equals(matrizDibujo[i][4])){
                 
                 g.setColor(Color.YELLOW);
                 aux1 = Integer.parseInt(matrizDibujo[i][0]);
@@ -153,7 +159,7 @@ public class Graficador extends JPanel {
                 g.drawArc(aux1+aux3/2,aux2+(aux3),aux3/4,aux3/4, 180, 180);
                 g.drawArc(aux1+(aux3+aux3/4),aux2+(aux3),aux3/4,aux3/4, 180, 180);
             }
-            if(matrizDibujo[i][4]=="neutral"){
+            if("neutral".equals(matrizDibujo[i][4])){
                 
                 g.setColor(Color.YELLOW);
                 aux1 = Integer.parseInt(matrizDibujo[i][0]);
@@ -166,8 +172,7 @@ public class Graficador extends JPanel {
                 g.fillOval(aux1+aux3/2,aux2+aux3/2 ,aux3/4 ,aux3/4);
                 g.fillOval(aux1+(aux3+aux3/4),aux2+aux3/2 ,aux3/4 ,aux3/4);
            }
-            if(matrizDibujo[i][4]=="enojada"){
-                
+            if("angry".equals(matrizDibujo[i][4])){
                 g.setColor(Color.YELLOW);
                 aux1 = Integer.parseInt(matrizDibujo[i][0]);
                 aux2 = Integer.parseInt(matrizDibujo[i][1]);
@@ -180,8 +185,7 @@ public class Graficador extends JPanel {
                 g.drawLine(aux1+aux3/2, aux2+aux3,aux1+ aux3 + aux3/2, aux2+aux3);
                 g.fillOval(aux1+aux3/2,aux2+aux3/2 ,aux3/4 ,aux3/4);
                 g.fillOval(aux1+(aux3+aux3/4),aux2+aux3/2 ,aux3/4 ,aux3/4);
-           }
-            
+           }    
             i++;
         }
         }
