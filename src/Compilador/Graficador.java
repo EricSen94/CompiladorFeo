@@ -74,7 +74,7 @@ public class Graficador extends JPanel {
         int aux3;
         int tamaño = matrizDibujo.length;
         int i=0;
-        while(i<=tamaño){
+        while(i<tamaño-1){
                 try{
                      sleep(1);
                 }
@@ -82,7 +82,7 @@ public class Graficador extends JPanel {
                      Logger.getLogger(Graficador.class.getName()).log(Level.SEVERE, null, ex);
                  }
         
-        while(matrizDibujo[i][0]!=null){
+        while(matrizDibujo[i][0]!=null && i<tamaño-1){
             //duerme como se indique, lo toma de la pos 4, espera los segundos guardados en la pos 0
              if("sleep".equals(matrizDibujo[i][4])){
                  try{
@@ -129,10 +129,10 @@ public class Graficador extends JPanel {
                 aux3 = Integer.parseInt(matrizDibujo[i][2]);
                 g.fillOval(aux1,aux2 ,aux3*2 ,aux3*2);
                 g.setColor(Color.BLACK);
-                g.drawString(matrizDibujo[i][3],aux1+aux3/2,aux2+aux3/3);
                 g.drawArc(aux1+(aux3/3),aux2+(aux3/3),(aux3/3)+aux3,(aux3/3)+aux3, 180, 180);
                 g.fillOval(aux1+aux3/2,aux2+aux3/2 ,aux3/4 ,aux3/4);
                 g.fillOval(aux1+(aux3+aux3/4),aux2+aux3/2 ,aux3/4 ,aux3/4);
+                g.drawString(matrizDibujo[i][3],aux1+aux3/2,aux2+aux3/3);
             }
             if("sad".equals(matrizDibujo[i][4])){
                
@@ -142,10 +142,10 @@ public class Graficador extends JPanel {
                 aux3 = Integer.parseInt(matrizDibujo[i][2]);
                 g.fillOval(aux1,aux2 ,aux3*2 ,aux3*2);
                 g.setColor(Color.BLACK);
-                g.drawString(matrizDibujo[i][3],aux1+aux3/2,aux2+aux3/3);
                 g.drawArc(aux1+(aux3/3),aux2+(aux3),(aux3/3)+aux3,(aux3/3)+aux3, 180, -180);
                 g.fillOval(aux1+aux3/2,aux2+aux3/2 ,aux3/4 ,aux3/4);
                 g.fillOval(aux1+(aux3+aux3/4),aux2+aux3/2 ,aux3/4 ,aux3/4);
+                g.drawString(matrizDibujo[i][3],aux1+aux3/2,aux2+aux3/3);
             }
             if("slepy".equals(matrizDibujo[i][4])){
                 
@@ -155,9 +155,9 @@ public class Graficador extends JPanel {
                 aux3 = Integer.parseInt(matrizDibujo[i][2]);
                 g.fillOval(aux1,aux2 ,aux3*2 ,aux3*2);
                 g.setColor(Color.BLACK);
-                g.drawString(matrizDibujo[i][3],aux1+aux3/2,aux2+aux3/3);
                 g.drawArc(aux1+aux3/2,aux2+(aux3),aux3/4,aux3/4, 180, 180);
                 g.drawArc(aux1+(aux3+aux3/4),aux2+(aux3),aux3/4,aux3/4, 180, 180);
+                g.drawString(matrizDibujo[i][3],aux1+aux3/2,aux2+aux3/3);
             }
             if("neutral".equals(matrizDibujo[i][4])){
                 
@@ -167,10 +167,10 @@ public class Graficador extends JPanel {
                 aux3 = Integer.parseInt(matrizDibujo[i][2]);
                 g.fillOval(aux1,aux2 ,aux3*2 ,aux3*2);
                 g.setColor(Color.BLACK);
-                g.drawString(matrizDibujo[i][3],aux1+aux3/2,aux2+aux3/3);
                 g.drawLine(aux1+aux3/2, aux2+aux3,aux1+ aux3 + aux3/2, aux2+aux3);
                 g.fillOval(aux1+aux3/2,aux2+aux3/2 ,aux3/4 ,aux3/4);
                 g.fillOval(aux1+(aux3+aux3/4),aux2+aux3/2 ,aux3/4 ,aux3/4);
+                g.drawString(matrizDibujo[i][3],aux1+aux3/2,aux2+aux3/3);
            }
             if("angry".equals(matrizDibujo[i][4])){
                 g.setColor(Color.YELLOW);
@@ -179,19 +179,15 @@ public class Graficador extends JPanel {
                 aux3 = Integer.parseInt(matrizDibujo[i][2]);
                 g.fillOval(aux1,aux2 ,aux3*2 ,aux3*2);
                 g.setColor(Color.BLACK);
-                g.drawString(matrizDibujo[i][3],aux1+aux3/2,aux2+aux3/3);
                 g.drawLine(aux1+aux3/2, aux2+aux3/3,aux1+ aux3,aux2 + aux3/2);
                 g.drawLine(aux1+ aux3, aux2+aux3/2,aux1+ aux3 + aux3/2,aux2 + aux3/3);
                 g.drawLine(aux1+aux3/2, aux2+aux3,aux1+ aux3 + aux3/2, aux2+aux3);
                 g.fillOval(aux1+aux3/2,aux2+aux3/2 ,aux3/4 ,aux3/4);
                 g.fillOval(aux1+(aux3+aux3/4),aux2+aux3/2 ,aux3/4 ,aux3/4);
+                g.drawString(matrizDibujo[i][3],aux1+aux3/2,aux2+aux3/3);
            }    
             i++;
         }
         }
-    }
-    @Override
-    public void repaint(){
-        
     }
 }
