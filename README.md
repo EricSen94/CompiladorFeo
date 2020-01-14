@@ -1,2 +1,2 @@
 # CompiladorFeo
-Proyecto para la materia de introduccion a los compiladores
+Primer programa para la materia de introduccion a los compiladores
